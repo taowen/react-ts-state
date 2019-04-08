@@ -5,7 +5,7 @@ import enUS from "antd/lib/locale-provider/en_US";
 import { route } from "./routes";
 
 export class App extends React.Component<{}, {}> {
-    public render(): JSX.Element {
+    public render() {
         return (
             <LocaleProvider locale={enUS}>
                 <HashRouter children={route} />
