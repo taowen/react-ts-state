@@ -1,3 +1,22 @@
-.some {
-    color: red
+.ant-layout-header {
+  height: 58px!important;
+}
+
+#app,
+div[data-reactroot] {
+  height: 100%;
+}
+
+.ant-layout {
+  background-color: #F3F9F9;
+  height: 100%;
+}
+
+.ant-layout-sider-collapsed .ant-menu .anticon {
+  font-size: 16px;
+  margin-left: 8px;
+}
+
+.ant-layout-sider-collapsed .ant-menu-submenu-vertical > .ant-menu-submenu-title:after {
+  display: none;
 }
