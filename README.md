@@ -1,6 +1,6 @@
 # react-ts-state
 
-Start with best practices
+Start with best practices. Copy this to start your next FE project.
 
 * static typing setup: react + typescript + typed css module + hot reload
 * total decoupling of the view and model: react + mobx + our state management tricks
