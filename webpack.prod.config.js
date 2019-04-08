@@ -43,6 +43,7 @@ module.exports = {
             { enforce: "pre", test: /\.js$/, loader: "source-map-loader" },
             {
                 test: /\.css$/,
+                include: resolve('src/components'),
                 use: [MiniCssExtractPlugin.loader, {
                     loader: 'css-loader',
                     options: {
@@ -52,12 +53,23 @@ module.exports = {
             },
             {
                 test: /\.less$/,
+                include: resolve('src/components'),
                 use: [MiniCssExtractPlugin.loader, {
                     loader: 'css-loader',
                     options: {
                         modules: true,
                     },
                 }, "less-loader"]
+            },
+            {
+                test: /\.css$/,
+                exclude: resolve('src/components'),
+                use: [MiniCssExtractPlugin.loader, 'css-loader']
+            },
+            {
+                test: /\.less$/,
+                exclude: resolve('src/components'),
+                use: [MiniCssExtractPlugin.loader, 'css-loader', "less-loader"]
             },
             { test: /\.png$/, loader: "url-loader?limit=100000" },
             { test: /\.jpg$/, loader: "file-loader" },
@@ -69,7 +81,7 @@ module.exports = {
     },
     plugins: [
         new TypedCssModulesPlugin({
-            globPattern: 'src/**/*.css',
+            globPattern: 'src/components/**/*.css',
         }),
         new MiniCssExtractPlugin({
             filename: "style.css",
