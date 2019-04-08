@@ -2,12 +2,14 @@ import * as React from "react";
 import { RouteConfig } from "react-router-config";
 import { Route, Switch } from "react-router-dom";
 import PageLayout from "./layouts/PageLayout";
+import { AboutPage } from "./pages/AboutPage";
+import { HomePage } from "./pages/HomePage";
 
 export const routes: RouteConfig[] = [
     {
         path: "/home",
         exact: true,
-        component: () => (<p />),
+        component: () => (<HomePage />),
     },
     {
         path: "/todo",
@@ -15,7 +17,7 @@ export const routes: RouteConfig[] = [
     },
     {
         path: "/about",
-        component: () => (<p />),
+        component: () => (<AboutPage />),
     },
 ];
 

@@ -17,6 +17,10 @@ div[data-reactroot] {
   margin-left: 8px;
 }
 
+.ant-layout-sider-collapsed .nav-text {
+  display: none;
+}
+
 .ant-layout-sider-collapsed .ant-menu-submenu-vertical > .ant-menu-submenu-title:after {
   display: none;
 }

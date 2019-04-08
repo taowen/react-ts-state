@@ -17,27 +17,27 @@ class Sidebar extends React.Component<{}, SidebarState> {
         };
     }
 
-    public render(): JSX.Element {
+    public render() {
         return (
             <Layout.Sider collapsible collapsed={this.state.collapsed} onCollapse={this.toggle}>
                 <div className={styles.antLayoutIcon}/>
-                <Menu theme="dark" mode={this.state.mode}>
+                <Menu theme="dark" mode={this.state.mode} defaultSelectedKeys={["1"]}>
                     <Menu.Item key="1">
                         <Link to="/home">
                             <Icon type="home" />
-                            <span className={styles.navText}>Home</span>
+                            <span className="nav-text">Home</span>
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="2">
                         <Link to="/todo">
                             <Icon type="check-square-o" />
-                            <span className={styles.navText}>Todo</span>
+                            <span className="nav-text">Todo</span>
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="3">
                         <Link to="/about">
                             <Icon type="file" />
-                            <span className={styles.navText}>About</span>
+                            <span className="nav-text">About</span>
                         </Link>
                     </Menu.Item>
                 </Menu>
