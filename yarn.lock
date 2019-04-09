@@ -3447,6 +3447,11 @@ mkdirp@0.5.1, mkdirp@0.5.x, mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0:
   dependencies:
     minimist "0.0.8"
 
+mobx@^5.9.4:
+  version "5.9.4"
+  resolved "https://registry.yarnpkg.com/mobx/-/mobx-5.9.4.tgz#1dee92aba33f67b7baeeb679e3bd376a12e55812"
+  integrity sha512-L9JjTX2rtQUAhCIgnHokfntNOsF14uioT9LqStf6Mya+16j56ZBe21E8Y9V59tfr2aH2kLQPD10qtCJXBuTAxw==
+
 mocha@^6.1.2:
   version "6.1.2"
   resolved "https://registry.yarnpkg.com/mocha/-/mocha-6.1.2.tgz#31e960580ef709ef5f26bbe760547cf5207b44df"
