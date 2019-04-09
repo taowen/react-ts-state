@@ -1,11 +1,11 @@
 import * as React from "react"
 import { Card, Table, Button, Modal, Input } from "antd"
-import * as mobx from "mobx"
 import { fieldsOf } from "../../concept/fields";
+import { AutoComponentProps, AutoComponent } from "../../concept/auto";
 
 const { Column } = Table
 
-export interface TodoItem {
+interface TodoItem {
     id: number
     key: number
     name: string
@@ -17,38 +17,10 @@ interface State {
     newTaskName?: string
     modalVisible?: boolean
     addItem(): void
-    completeItem(record: TodoItem): void
+    completeItem(recordId: number): void
 }
 
 interface Props extends AutoComponentProps<State> {
-}
-
-interface AutoComponentProps<S> {
-    getState: <P, S>(componentClass: React.ComponentClass<P, S>, props: P) => S
-}
-
-abstract class AutoComponent<P extends AutoComponentProps<S>, S> extends React.Component<P, S> {
-
-    private disposeAutoRun: mobx.IReactionDisposer|null = null;
-
-    constructor(props: P) {
-        super(props)
-        const thisClass = this.constructor as React.ComponentClass<P, S>
-        this.state = props.getState(thisClass, props)
-    }
-
-    componentDidMount() {
-        const thisClass = this.constructor as React.ComponentClass<P, S>
-        this.disposeAutoRun = mobx.autorun(() => {
-            this.setState(this.props.getState(thisClass, this.props))
-        })
-    }
-
-    componentWillUnmount() {
-        if (this.disposeAutoRun) {
-            this.disposeAutoRun()
-        }
-    }
 }
 
 export class TodoPage extends AutoComponent<Props, State> {
@@ -69,7 +41,7 @@ export class TodoPage extends AutoComponent<Props, State> {
                         <Column title="Action" key="action" render={(text: any, record: TodoItem, index: number) => (
                             <Button type="primary" disabled={record.isCompleted}
                                 onClick={() => {
-                                    this.state.completeItem(record)
+                                    this.state.completeItem(record.id)
                                 }}>Complete</Button>
                         )} />
                     </Table>
