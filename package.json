@@ -11,25 +11,27 @@
     },
     "dependencies": {
         "antd": "^3.12.1",
-        "react": "^16.7.0",
-        "react-dom": "^16.7.0",
-        "react-router": "4.3.1",
-        "react-router-config": "4.4.0-beta.6",
-        "react-router-dom": "4.3.1"
+        "react": "~16.7.0",
+        "react-dom": "~16.7.0",
+        "react-router": "~4.3.1",
+        "react-router-config": "~4.4.0-beta.6",
+        "react-router-dom": "~4.3.1"
     },
     "devDependencies": {
         "@types/node": "^10.12.18",
-        "@types/react": "^16.7.18",
-        "@types/react-dom": "^16.0.11",
-        "@types/react-redux": "^6.0.12",
-        "@types/react-router": "^4.4.3",
-        "@types/react-router-config": "^1.1.0",
-        "@types/react-router-dom": "4.3.1",
+        "@types/react": "~16.7.18",
+        "@types/react-dom": "~16.0.11",
+        "@types/react-redux": "~6.0.12",
+        "@types/react-router": "~4.4.3",
+        "@types/react-router-config": "~1.1.0",
+        "@types/react-router-dom": "~4.3.1",
         "css-loader": "^2.1.1",
         "html-webpack-plugin": "^3.2.0",
         "less": "^3.9.0",
         "less-loader": "^4.1.0",
         "mini-css-extract-plugin": "^0.5.0",
+        "source-map-loader": "^0.2.4",
+        "ts-import-plugin": "^1.5.2",
         "ts-loader": "^5.3.3",
         "tslint": "^5.15.0",
         "tslint-loader": "^3.5.4",
@@ -38,8 +40,6 @@
         "url-loader": "^1.1.2",
         "webpack": "^4.28.3",
         "webpack-cli": "^3.2.1",
-        "webpack-dev-server": "^3.1.14",
-        "source-map-loader": "^0.2.4",
-        "ts-import-plugin": "^1.5.2"
+        "webpack-dev-server": "^3.1.14"
     }
 }
