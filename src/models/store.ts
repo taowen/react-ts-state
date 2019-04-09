@@ -2,8 +2,14 @@ import { observable } from "mobx";
 import { StateProviders } from "../concept/auto";
 import { TodoPage } from "../components/pages/TodoPage";
 import * as mobx from "mobx"
+import { TodoList } from "../components/pages/todo/TodoList";
 
-export class TodoItem {
+class Store {
+    @observable
+    todoItems: TodoItem[] = []
+}
+
+class TodoItem {
 
     @observable
     id: number = 0
@@ -19,18 +25,12 @@ export class TodoItem {
     }
 }
 
-class Store {
-    @observable
-    todoItems: TodoItem[] = []
-}
-
 export const store = new Store() // the domain model
 
 export const stateProviders = new StateProviders() // bind domain model into various view model
 
 stateProviders.bind(TodoPage, (props): TodoPage['StateType'] => {
     return {
-        todoItems: mobx.toJS(store.todoItems), // watch them all
         addItem(): void {
             store.todoItems.push(new TodoItem({
                 id: store.todoItems.length,
@@ -40,6 +40,12 @@ stateProviders.bind(TodoPage, (props): TodoPage['StateType'] => {
             }))
             this.newTaskName = ''
         },
+    }
+})
+
+stateProviders.bind(TodoList, (props) => {
+    return {
+        todoItems: mobx.toJS(store.todoItems), // watch them all
         completeItem(recordId: number): void {
             store.todoItems[recordId].isCompleted = true
         }
