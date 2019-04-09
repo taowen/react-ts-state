@@ -2,7 +2,7 @@ import * as React from "react";
 import { RouteConfig } from "react-router-config";
 import { Route, Switch } from "react-router-dom";
 import PageLayout from "./layouts/PageLayout";
-import { AboutPage } from "./pages/AboutPage";
+import { FormPage } from "./pages/FormPage";
 import { HomePage } from "./pages/HomePage";
 
 export const routes: RouteConfig[] = [
@@ -16,8 +16,8 @@ export const routes: RouteConfig[] = [
         component: () => (<p />),
     },
     {
-        path: "/about",
-        component: () => (<AboutPage />),
+        path: "/form",
+        component: () => (<FormPage />),
     },
 ];
 
