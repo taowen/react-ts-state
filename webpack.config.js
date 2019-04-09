@@ -45,12 +45,12 @@ module.exports = {
     },
     module: {
         rules: [
-            {
-                enforce: "pre",
-                test: /\.(ts|tsx)?$/,
-                loader: 'tslint-loader',
-                exclude: [resolve(__dirname, "node_modules")],
-            },
+            // {
+            //     enforce: "pre",
+            //     test: /\.(ts|tsx)?$/,
+            //     loader: 'tslint-loader',
+            //     exclude: [resolve(__dirname, "node_modules")],
+            // },
             {
                 test: /\.(ts|tsx)?$/,
                 use: [
