@@ -1,16 +1,13 @@
-import * as React from "react"
-import { Form, Input, Button } from "antd"
+import { Button, Form } from "antd";
+import * as React from "react";
+import { AutoComponent } from "../../concept/auto";
 import { fieldsOf } from "../../concept/fields";
-import { withValidation } from "../../concept/validate";
-import { AutoComponent, AutoComponentProps } from "../../concept/auto";
+import { VInput } from "../../concept/validate";
 
-const VInput = withValidation(Input)
-
-interface Props extends AutoComponentProps<ValidatorPageState> {
-
+interface Props {
 }
 
-export interface ValidatorPageState {
+export interface State {
     userName: {
         firstName: string,
         lastName: string
@@ -18,11 +15,11 @@ export interface ValidatorPageState {
     password: string
 }
 
-export class ValidatorPage extends AutoComponent<Props, ValidatorPageState> {
+class ValidatorPage extends AutoComponent<Props, State> {
 
     public render() {
         return (
-            <Form layout="inline" style={{ margin: "16px 16px" }}>
+            <Form style={{ margin: "16px 16px" }} layout="inline">
                 <VInput label="frist name" field={fieldsOf(this).userName.firstName} />
                 <VInput label="last name" field={fieldsOf(this).userName.lastName} />
                 <VInput label="password" field={fieldsOf(this).password} />
@@ -30,6 +27,10 @@ export class ValidatorPage extends AutoComponent<Props, ValidatorPageState> {
                     <Button type="primary" htmlType="submit" onClick={() => { alert(JSON.stringify(this.state)) }}>Submit</Button>
                 </Form.Item>
             </Form>
-        );
+        )
     }
 }
+
+export { ValidatorPage };
+export { ValidatorPage as Comp };
+

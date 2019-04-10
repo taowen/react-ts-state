@@ -47,26 +47,18 @@ export class FieldRef {
         this.path = path
     }
 
-    get() {
-        return getValue(this.comp.state, this.path)
-    }
-
-    set(value: any) {
-        const newState = changeValueByCopy(this.comp.state, this.path, value)
-        this.comp.setState(newState)
-    }
-
     static traps: ProxyHandler<FieldRef> = {
         get(target: FieldRef, propertyKey: string) {
             if (propertyKey === '__FIELD_REF') {
                 return target
             }
             if (propertyKey === 'value') {
-                return target.get()
+                return getValue(target.comp.state, target.path)
             }
             if (propertyKey === 'onChange') {
                 return (e: React.ChangeEvent<HTMLElementWithValue>) => {
-                    target.set(e.target.value)
+                    const newState = changeValueByCopy(target.comp.state, target.path, e.target.value)
+                    target.comp.setState(newState)
                 }
             }
             return new Proxy(new FieldRef(target.comp, target.path.concat([propertyKey])), FieldRef.traps)

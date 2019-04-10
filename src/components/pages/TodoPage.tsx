@@ -1,10 +1,10 @@
 import { Button, Card } from "antd";
 import * as React from "react";
-import { AutoComponent, AutoComponentProps } from "../../concept/auto";
+import { AutoComponent } from "../../concept/auto";
 import { NewTodo } from "./todo/NewTodo";
 import { TodoList } from "./todo/TodoList";
 
-interface Props extends AutoComponentProps<State> {
+interface Props {
 }
 
 interface State {

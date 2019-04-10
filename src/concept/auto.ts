@@ -26,12 +26,12 @@ export interface AutoComponentProps<S> {
     getState: <P, S>(componentClass: React.ComponentClass<P, S>, props: P) => S
 }
 
-export abstract class AutoComponent<P extends AutoComponentProps<S>, S> extends React.Component<P, S> {
+export abstract class AutoComponent<P, S> extends React.Component<P & AutoComponentProps<S>, S> {
 
     private disposeAutoRun: mobx.IReactionDisposer | null = null;
     StateType: S // to allow reference S via Component['StateType']
 
-    constructor(props: P) {
+    constructor(props: P & AutoComponentProps<S>) {
         super(props)
         const thisClass = this.constructor as React.ComponentClass<P, S>
         this.state = props.getState(thisClass, props)

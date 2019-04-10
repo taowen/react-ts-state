@@ -1,10 +1,10 @@
 import { Button, Table } from "antd";
 import * as React from "react";
-import { AutoComponent, AutoComponentProps } from "../../../concept/auto";
+import { AutoComponent } from "../../../concept/auto";
 
 const { Column } = Table
 
-interface Props extends AutoComponentProps<State> {
+interface Props {
 }
 
 interface State {

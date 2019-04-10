@@ -1,9 +1,9 @@
 import { Input, Modal } from "antd";
 import * as React from "react";
-import { AutoComponent, AutoComponentProps } from "../../../concept/auto";
+import { AutoComponent } from "../../../concept/auto";
 import { fieldsOf } from "../../../concept/fields";
 
-interface Props extends AutoComponentProps<State> {
+interface Props {
 }
 
 interface State {
