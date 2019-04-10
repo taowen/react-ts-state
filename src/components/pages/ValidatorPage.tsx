@@ -25,7 +25,7 @@ class ValidatorPage extends AutoComponent<Props, State> {
                 <VInput label="last name" field={fieldsOf(this).userName.lastName} />
                 <VInput label="password" field={fieldsOf(this).password} />
                 <Form.Item>
-                    <Button type="primary" htmlType="submit" onClick={() => { this.autoState.onSubmit() }}>Submit</Button>
+                    <Button type="primary" htmlType="submit" onClick={() => { this.state.onSubmit() }}>Submit</Button>
                 </Form.Item>
             </Form>
         )

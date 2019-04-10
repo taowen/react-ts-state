@@ -29,19 +29,19 @@ export interface AutoComponentProps<S> {
 export abstract class AutoComponent<P, S> extends React.Component<P & AutoComponentProps<S>, S> {
 
     private disposeAutoRun: mobx.IReactionDisposer | null = null;
-    autoState: S // to allow reference S via Component['StateType']
+    StateType: S // to allow reference S via Component['StateType']
 
     constructor(props: P & AutoComponentProps<S>) {
         super(props)
         const thisClass = this.constructor as React.ComponentClass<P, S>
-        this.state = this.autoState = props.getState(thisClass, props)
+        this.state = props.getState(thisClass, props)
     }
 
     componentDidMount() {
         const thisClass = this.constructor as React.ComponentClass<P, S>
         const thisProps = this.props as any
         this.disposeAutoRun = mobx.autorun(() => {
-            this.setState(this.autoState = thisProps.getState(thisClass, this.props))
+            this.setState(thisProps.getState(thisClass, this.props))
         })
     }
 

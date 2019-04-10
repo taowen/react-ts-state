@@ -14,7 +14,9 @@ interface State {
     value?: any
     onChange?(e: React.ChangeEvent<HTMLElementWithValue>): void
     validateStatus?: FormItemProps['validateStatus']
-    help?: FormItemProps['help']
+    help?: string
+    required?: boolean
+    placeholder?: string
 }
 
 export const withValidation = <P extends Record<string, any>>(Component: React.ComponentType<P>) =>
@@ -32,15 +34,16 @@ export const withValidation = <P extends Record<string, any>>(Component: React.C
             const fieldRef = (field as FieldRefProxy).__FIELD_REF
             const { getState } = fieldRef.comp.props as any
             const form = getState(fieldRef.comp.constructor)
-            const validateStatusPath = fieldRef.path.slice() // copy
-            validateStatusPath[validateStatusPath.length - 1] += '_validateStatus'
-            const helpPath = fieldRef.path.slice(0) // copy
-            helpPath[validateStatusPath.length - 1] += '_help'
+            const leafPath = fieldRef.path.slice(0, fieldRef.path.length - 1)
+            const leafProp = fieldRef.path[fieldRef.path.length - 1]
             this.disposeAutoRun = mobx.autorun(() => {
+                const leaf = getValue(form, leafPath)
                 this.setState({
-                    value: getValue(form, fieldRef.path),
-                    validateStatus: getValue(form, validateStatusPath),
-                    help: getValue(form, helpPath),
+                    value: getValue(leaf, [leafProp]),
+                    validateStatus: getValue(leaf, [leafProp + '_validateStatus']),
+                    help: getValue(leaf, [leafProp + '_help']),
+                    required: getValue(leaf, [leafProp + '_required']),
+                    placeholder: getValue(leaf, [leafProp + '_placeholder']),
                     onChange(e: React.ChangeEvent<HTMLElementWithValue>) {
                         setValue(form, fieldRef.path, e.target.value)
                     }
@@ -56,9 +59,10 @@ export const withValidation = <P extends Record<string, any>>(Component: React.C
 
         render() {
             const { label, field, hasFeedback, ...origProps } = this.props
+            const state = this.state
             return (
-                <Form.Item label={label} validateStatus={this.state.validateStatus} help={this.state.help} hasFeedback={hasFeedback}>
-                    <Component {...origProps as P} value={this.state.value} onChange={this.state.onChange} />
+                <Form.Item label={label} validateStatus={state.validateStatus} help={state.help} required={state.required} hasFeedback={hasFeedback}>
+                    <Component {...origProps as P} value={state.value} onChange={state.onChange} placeholder={state.placeholder} />
                 </Form.Item>)
         }
     };
