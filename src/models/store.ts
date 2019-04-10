@@ -3,7 +3,7 @@ import { observable, computed } from "mobx";
 import { NewTodo } from "../components/pages/todo/NewTodo";
 import { TodoList } from "../components/pages/todo/TodoList";
 import { TodoPage } from "../components/pages/TodoPage";
-import { StateProviders } from "../concept/auto";
+import { StateProviders } from "../concept/AutoComponent";
 import { DemoForm } from "./demoForm";
 import { ValidatorPage } from "../components/pages/ValidatorPage";
 

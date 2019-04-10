@@ -1,6 +1,6 @@
 import { Button, Card } from "antd";
 import * as React from "react";
-import { AutoComponent } from "../../concept/auto";
+import { AutoComponent } from "../../concept/AutoComponent";
 import { NewTodo } from "./todo/NewTodo";
 import { TodoList } from "./todo/TodoList";
 

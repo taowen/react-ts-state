@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Form, Input, Button } from "antd"
-import { fieldsOf } from "../../concept/fields";
+import { fieldsOf } from "../../concept/FieldRef";
 
 interface State {
     userName?: {

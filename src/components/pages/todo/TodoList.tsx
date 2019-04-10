@@ -1,6 +1,6 @@
 import { Button, Table } from "antd";
 import * as React from "react";
-import { AutoComponent } from "../../../concept/auto";
+import { AutoComponent } from "../../../concept/AutoComponent";
 
 const { Column } = Table
 

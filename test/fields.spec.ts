@@ -1,5 +1,5 @@
 import * as chai from "chai"
-import { changeValueByCopy } from "../src/concept/fields";
+import { changeValueByCopy } from "../src/concept/FieldRef";
 
 const expect = chai.expect
 

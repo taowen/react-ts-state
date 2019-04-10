@@ -1,13 +1,14 @@
-import { Form, Input } from "antd";
+import { Form, Input, Select } from "antd";
 import { FormItemProps } from "antd/lib/form";
 import * as mobx from "mobx";
 import * as React from "react";
-import { FieldRefProxy, HTMLElementWithValue } from "./fields";
+import { FieldRefProxy, HTMLElementWithValue } from "../FieldRef";
 
 interface Props {
-    label: string
     field: any | FieldRefProxy
     hasFeedback?: boolean
+    label?: string
+    placeholder?: string
 }
 
 interface State {
@@ -16,6 +17,8 @@ interface State {
     validateStatus?: FormItemProps['validateStatus']
     help?: string
     required?: boolean
+    // can be set by both props and state
+    label?: string
     placeholder?: string
 }
 
@@ -44,6 +47,7 @@ export const withValidation = <P extends Record<string, any>>(Component: React.C
                     help: getValue(leaf, [leafProp + '_help']),
                     required: getValue(leaf, [leafProp + '_required']),
                     placeholder: getValue(leaf, [leafProp + '_placeholder']),
+                    label: getValue(leaf, [leafProp + '_label']),
                     onChange(e: React.ChangeEvent<HTMLElementWithValue>) {
                         setValue(form, fieldRef.path, e.target.value)
                     }
@@ -58,11 +62,13 @@ export const withValidation = <P extends Record<string, any>>(Component: React.C
         }
 
         render() {
-            const { label, field, hasFeedback, ...origProps } = this.props
+            let { label, placeholder, field, hasFeedback, ...origProps } = this.props
             const state = this.state
+            label = this.state.label || label
+            placeholder = this.state.placeholder || placeholder
             return (
                 <Form.Item label={label} validateStatus={state.validateStatus} help={state.help} required={state.required} hasFeedback={hasFeedback}>
-                    <Component {...origProps as P} value={state.value} onChange={state.onChange} placeholder={state.placeholder} />
+                    <Component {...origProps as P} value={state.value} onChange={state.onChange} placeholder={placeholder} />
                 </Form.Item>)
         }
     };
@@ -88,3 +94,4 @@ function setValue(state: Record<string, any>, path: string[], value: any) {
 }
 
 export const VInput = withValidation(Input)
+export const VSelect = withValidation(Select)
