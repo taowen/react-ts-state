@@ -1,12 +1,16 @@
+import * as mobx from "mobx";
 import { observable } from "mobx";
-import { StateProviders } from "../concept/auto";
-import { TodoPage } from "../components/pages/TodoPage";
-import * as mobx from "mobx"
+import { NewTodo } from "../components/pages/todo/NewTodo";
 import { TodoList } from "../components/pages/todo/TodoList";
+import { TodoPage } from "../components/pages/TodoPage";
+import { StateProviders } from "../concept/auto";
 
 class Store {
     @observable
     todoItems: TodoItem[] = []
+
+    @observable
+    addingNewTodo: boolean
 }
 
 class TodoItem {
@@ -29,7 +33,15 @@ export const store = new Store() // the domain model
 
 export const stateProviders = new StateProviders() // bind domain model into various view model
 
-stateProviders.bind(TodoPage, (props): TodoPage['StateType'] => {
+stateProviders.bind(TodoPage, (props) => {
+    return {
+        addNewTodo() {
+            store.addingNewTodo = true
+        }
+    }
+})
+
+stateProviders.bind(NewTodo, (props): NewTodo['StateType'] => {
     return {
         addItem(): void {
             store.todoItems.push(new TodoItem({
@@ -40,6 +52,10 @@ stateProviders.bind(TodoPage, (props): TodoPage['StateType'] => {
             }))
             this.newTaskName = ''
         },
+        close() {
+            store.addingNewTodo = false
+        },
+        isOpen: store.addingNewTodo
     }
 })
 

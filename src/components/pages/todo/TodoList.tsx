@@ -1,15 +1,10 @@
-import * as React from "react"
-import { Card, Table, Button, Modal, Input } from "antd"
-import { fieldsOf } from "../../../concept/fields";
-import { AutoComponentProps, AutoComponent } from "../../../concept/auto";
+import { Button, Table } from "antd";
+import * as React from "react";
+import { AutoComponent, AutoComponentProps } from "../../../concept/auto";
 
 const { Column } = Table
 
-interface TodoItem {
-    id: number
-    key: number
-    name: string
-    isCompleted: boolean
+interface Props extends AutoComponentProps<State> {
 }
 
 interface State {
@@ -17,7 +12,11 @@ interface State {
     completeItem(recordId: number): void
 }
 
-interface Props extends AutoComponentProps<State> {
+interface TodoItem {
+    id: number
+    key: number
+    name: string
+    isCompleted: boolean
 }
 
 export class TodoList extends AutoComponent<Props, State> {
