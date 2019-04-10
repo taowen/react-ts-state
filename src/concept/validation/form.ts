@@ -4,12 +4,31 @@ const METADATA_KEY = 'validation:form'
 
 export function form<T extends { new(...args: any[]): {} }>(target: T) {
     return class extends target {
+
         constructor(...args: any[]) {
             super(...args)
             // so all methods can be accessed as properties
             assignProtoMethods(this)
             assignFieldOptions(target, this)
         }
+
+        validate(): void {
+            for (let fieldName of getMeta(target).fields) {
+                let meta = field.getMeta(this, fieldName)
+                const options = meta.options
+                let obj = this as Record<string, any>
+                if (options.required && !obj[fieldName]) {
+                    obj[fieldName + '_validateStatus'] = 'error'
+                    obj[fieldName + '_help'] = options.help || `${options.label} is required`
+                }
+            }
+        }
+    }
+}
+
+form.validate = (obj: Record<string, any>): void => {
+    if (obj.validate) {
+        obj.validate()
     }
 }
 
@@ -25,8 +44,10 @@ function assignProtoMethods(obj: any) {
 function assignFieldOptions(target: Function, obj: any) {
     for (let fieldName of getMeta(target).fields) {
         let meta = field.getMeta(obj, fieldName)
-        const options = Object.assign({ label: fieldName }, meta.options || {})
-        for (let [k, v] of Object.entries(options)) {
+        if (!meta.options.label) {
+            meta.options.label = fieldName
+        }
+        for (let [k, v] of Object.entries(meta.options)) {
             // for example: password_label
             (obj as any)[fieldName + '_' + k] = v
         }

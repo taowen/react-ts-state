@@ -12,8 +12,7 @@ export class DemoForm implements ValidatorPage.State {
     password: string
 
     onSubmit() {
-        (this as any).password_validateStatus = 'error'
-        console.log(this)
+        form.validate(this)
     }
 }
 

@@ -32,13 +32,13 @@ export function field(target: any, propertyKey?: string) {
 }
 
 interface FieldMeta {
-    options?: FieldOptions
+    options: FieldOptions
 }
 
 export function getMeta(target: any, propertyKey: string): FieldMeta {
     let meta = Reflect.getMetadata(METADATA_KEY, target, propertyKey) as FieldMeta
     if (!meta) {
-        meta = {}
+        meta = { options: {} }
         Reflect.defineMetadata(METADATA_KEY, meta, target, propertyKey)
     }
     return meta
