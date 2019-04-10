@@ -2,19 +2,23 @@ import * as React from "react"
 import { Form, Input, Button } from "antd"
 import { fieldsOf } from "../../concept/fields";
 import { withValidation } from "../../concept/validate";
-import { AutoComponent } from "../../concept/auto";
-
-interface State {
-    userName?: {
-        firstName?: string,
-        lastName?: string
-    }
-    password?: string
-}
+import { AutoComponent, AutoComponentProps } from "../../concept/auto";
 
 const VInput = withValidation(Input)
 
-export class ValidatorPage extends AutoComponent<{}, State> {
+interface Props extends AutoComponentProps<ValidatorPageState> {
+
+}
+
+export interface ValidatorPageState {
+    userName: {
+        firstName: string,
+        lastName: string
+    }
+    password: string
+}
+
+export class ValidatorPage extends AutoComponent<Props, ValidatorPageState> {
 
     public render() {
         return (

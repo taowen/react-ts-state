@@ -1,43 +1,44 @@
-import * as React from "react"
 import { Form } from "antd";
-import { FieldRefProxy } from "./fields";
-import { AutoComponent } from "./auto";
+import { FormItemProps } from "antd/lib/form";
+import * as React from "react";
+import { FieldRef, FieldRefProxy, HTMLElementWithValue } from "./fields";
+import * as mobx from "mobx"
 
 interface Props {
     label: string
     field: any | FieldRefProxy
+    hasFeedback?: boolean
 }
-
-// export const withValidation = <P extends object>(
-//     Component: React.ComponentType<P>
-// ): React.FC<P & Props> => ({
-//     label,
-//     field,
-//     ...props
-// }: Props) => {
-//         const fieldRef = (field as FieldRefProxy).__FIELD_REF
-//         return (
-//             <Form.Item label={label}>
-//                 <Component {...props as P} value={field.value} onChange={field.onChange} />
-//             </Form.Item>)
-//     }
-
 
 interface State {
-    
+    value?: any
+    onChange?(e: React.ChangeEvent<HTMLElementWithValue>): void
+    validateStatus?: FormItemProps['validateStatus']
 }
 
-export const withValidation = <P extends object>(Component: React.ComponentType<P>) =>
-    class WithValidation extends AutoComponent<P & Props, State> {
-        constructor(props: Props) {
-            super((props.field as FieldRefProxy).__FIELD_REF.comp.props as any)
+export const withValidation = <P extends Record<string, any>>(Component: React.ComponentType<P>) =>
+    class WithValidation extends React.Component<P & Props, State> {
+
+        constructor(props: P) {
+            super(props)
+            this.state = {}
         }
-        render() {
-            const { label, field, ...props } = this.props;
+
+        componentDidMount() {
+            const { field } = this.props
             const fieldRef = (field as FieldRefProxy).__FIELD_REF
+            console.log(fieldRef.comp.state)
+            console.log(fieldRef.path)
+            mobx.autorun(() => {
+
+            })
+        }
+
+        render() {
+            const { label, field, hasFeedback, ...origProps } = this.props
             return (
-                <Form.Item label={label}>
-                    <Component {...props as P} value={field.value} onChange={field.onChange} />
+                <Form.Item label={label} validateStatus={this.state.validateStatus} hasFeedback={hasFeedback}>
+                    <Component {...origProps as P} value={this.state.value} onChange={this.state.onChange} />
                 </Form.Item>)
         }
     };

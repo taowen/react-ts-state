@@ -4,6 +4,8 @@ import { NewTodo } from "../components/pages/todo/NewTodo";
 import { TodoList } from "../components/pages/todo/TodoList";
 import { TodoPage } from "../components/pages/TodoPage";
 import { StateProviders } from "../concept/auto";
+import { DemoForm } from "./demoForm";
+import { ValidatorPage } from "../components/pages/ValidatorPage";
 
 class Store {
 
@@ -89,4 +91,10 @@ stateProviders.bind(TodoList, (props) => {
             store.completeItem(recordId)
         }
     }
+})
+
+const demoForm = new DemoForm()
+
+stateProviders.bind(ValidatorPage, (props): ValidatorPage['StateType'] => {
+    return demoForm
 })

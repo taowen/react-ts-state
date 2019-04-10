@@ -29,8 +29,8 @@ type Field<S> = {
     [key in keyof Required<S>]: Field<Required<S>[key]>
 }
 
-interface HTMLElementWithValue {
-    value: string
+export interface HTMLElementWithValue {
+    value: any
 }
 
 export interface FieldRefProxy {
