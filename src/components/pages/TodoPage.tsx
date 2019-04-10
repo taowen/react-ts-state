@@ -21,7 +21,7 @@ export class TodoPage extends AutoComponent<Props, State> {
                 <Card bordered title={`Todo List (${state.pendingItemsCount} / ${state.totalItemsCount})`} style={{ margin: "16px 16px" }}>
                     <Button type="primary" icon="plus"
                         onClick={() => { state.addNewTodo() }}>New Task</Button>
-                    <TodoList {...this.props}/>
+                    <TodoList {...this.props} />
                 </Card>
                 <NewTodo {...this.props} />
             </div>

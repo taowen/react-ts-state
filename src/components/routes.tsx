@@ -24,7 +24,7 @@ export const routes: RouteConfig[] = [
     },
     {
         path: "/validator",
-        component: () => (<ValidatorPage />),
+        component: () => (<ValidatorPage  {...stateProviders.props}/>),
     },
 ];
 

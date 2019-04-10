@@ -3,14 +3,14 @@ import * as React from "react"
 // provide field binding between state and input
 
 export function fieldsOf<P, S>(comp: React.Component<P, S>): Fields<Required<S>> {
-    return new Proxy(new FieldsProxy(comp as any), FieldsProxy.traps) as any
+    return new Proxy(new FieldsRef(comp as any), FieldsRef.traps) as any
 }
 
 type Fields<S> = {
     [key in keyof S]: Field<Required<S>[key]>
 }
 
-class FieldsProxy {
+class FieldsRef {
 
     comp: React.Component
 
@@ -18,9 +18,9 @@ class FieldsProxy {
         this.comp = comp
     }
 
-    static traps: ProxyHandler<FieldsProxy> = {
-        get(target: FieldsProxy, propertyKey: string) {
-            return new Proxy(new FieldProxy(target.comp, [propertyKey]), FieldProxy.traps)
+    static traps: ProxyHandler<FieldsRef> = {
+        get(target: FieldsRef, propertyKey: string) {
+            return new Proxy(new FieldRef(target.comp, [propertyKey]), FieldRef.traps)
         }
     }
 }
@@ -33,7 +33,11 @@ interface HTMLElementWithValue {
     value: string
 }
 
-class FieldProxy {
+export interface FieldRefProxy {
+    __FIELD_REF: FieldRef
+}
+
+export class FieldRef {
 
     comp: React.Component
     path: string[]
@@ -52,8 +56,11 @@ class FieldProxy {
         this.comp.setState(newState)
     }
 
-    static traps: ProxyHandler<FieldProxy> = {
-        get(target: FieldProxy, propertyKey: string) {
+    static traps: ProxyHandler<FieldRef> = {
+        get(target: FieldRef, propertyKey: string) {
+            if (propertyKey === '__FIELD_REF') {
+                return target
+            }
             if (propertyKey === 'value') {
                 return target.get()
             }
@@ -62,15 +69,15 @@ class FieldProxy {
                     target.set(e.target.value)
                 }
             }
-            return new Proxy(new FieldProxy(target.comp, target.path.concat([propertyKey])), FieldProxy.traps)
+            return new Proxy(new FieldRef(target.comp, target.path.concat([propertyKey])), FieldRef.traps)
         },
-        getOwnPropertyDescriptor(target: FieldProxy, propertyKey: string) {
+        getOwnPropertyDescriptor(target: FieldRef, propertyKey: string) {
             if (propertyKey === 'value' || propertyKey === 'onChange') {
                 return Reflect.getOwnPropertyDescriptor({ value: true, onChange: true }, propertyKey)
             }
             throw new Error('unsupported')
         },
-        ownKeys(target: FieldProxy) {
+        ownKeys(target: FieldRef) {
             return ['value', 'onChange']
         }
     }
