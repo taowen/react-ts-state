@@ -6,6 +6,7 @@ import PageLayout from "./layouts/PageLayout";
 import { FormPage } from "./pages/FormPage";
 import { HomePage } from "./pages/HomePage";
 import { TodoPage } from "./pages/TodoPage";
+import { ValidatorPage } from "./pages/ValidatorPage";
 
 export const routes: RouteConfig[] = [
     {
@@ -20,6 +21,10 @@ export const routes: RouteConfig[] = [
     {
         path: "/form",
         component: () => (<FormPage />),
+    },
+    {
+        path: "/validator",
+        component: () => (<ValidatorPage />),
     },
 ];
 

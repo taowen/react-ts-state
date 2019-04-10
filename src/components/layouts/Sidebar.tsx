@@ -40,6 +40,12 @@ class Sidebar extends React.Component<{}, SidebarState> {
                             <span className="nav-text">Form</span>
                         </Link>
                     </Menu.Item>
+                    <Menu.Item key="4">
+                        <Link to="/validator">
+                            <Icon type="check" />
+                            <span className="nav-text">Validator</span>
+                        </Link>
+                    </Menu.Item>
                 </Menu>
                 <div className={styles.siderTrigger}>
                     <Icon
