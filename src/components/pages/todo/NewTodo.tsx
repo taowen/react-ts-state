@@ -9,19 +9,16 @@ interface Props extends AutoComponentProps<State> {
 interface State {
     newTaskName?: string
     isOpen: boolean
-    addItem(): void
-    close(): void
+    onOk(): void
+    onCancel(): void
 }
 
 export class NewTodo extends AutoComponent<Props, State> {
     public render() {
         return (
             <Modal title="New Task" visible={this.state.isOpen}
-                onOk={() => {
-                    this.state.addItem()
-                    this.state.close()
-                }}
-                onCancel={() => this.state.close()}>
+                onOk={() => { this.state.onOk() }}
+                onCancel={() => this.state.onCancel()}>
                 <Input.TextArea placeholder="Input the name of the task" rows={4} {...fieldsOf(this).newTaskName} />
             </Modal>
         );

@@ -70,11 +70,12 @@ stateProviders.bind(TodoPage, (props): TodoPage['StateType'] => {
 
 stateProviders.bind(NewTodo, (props): NewTodo['StateType'] => {
     return {
-        addItem(): void {
+        onOk(): void {
             store.addItem(this.newTaskName!)
             this.newTaskName = ''
+            store.addingNewTodo = false
         },
-        close() {
+        onCancel() {
             store.addingNewTodo = false
         },
         isOpen: store.addingNewTodo
