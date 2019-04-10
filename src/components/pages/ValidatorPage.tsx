@@ -13,6 +13,7 @@ export interface State {
         lastName: string
     }
     password: string
+    onSubmit(): void
 }
 
 class ValidatorPage extends AutoComponent<Props, State> {
@@ -24,7 +25,7 @@ class ValidatorPage extends AutoComponent<Props, State> {
                 <VInput label="last name" field={fieldsOf(this).userName.lastName} />
                 <VInput label="password" field={fieldsOf(this).password} />
                 <Form.Item>
-                    <Button type="primary" htmlType="submit" onClick={() => { alert(JSON.stringify(this.state)) }}>Submit</Button>
+                    <Button type="primary" htmlType="submit" onClick={() => { this.autoState.onSubmit() }}>Submit</Button>
                 </Form.Item>
             </Form>
         )

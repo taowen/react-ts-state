@@ -60,7 +60,7 @@ export const store = new Store()
 // bind domain model into various view model
 export const stateProviders = new StateProviders() 
 
-stateProviders.bind(TodoPage, (props): TodoPage['StateType'] => {
+stateProviders.bind(TodoPage, (props): TodoPage['autoState'] => {
     return {
         addNewTodo() {
             store.addingNewTodo = true
@@ -70,7 +70,7 @@ stateProviders.bind(TodoPage, (props): TodoPage['StateType'] => {
     }
 })
 
-stateProviders.bind(NewTodo, (props): NewTodo['StateType'] => {
+stateProviders.bind(NewTodo, (props): NewTodo['autoState'] => {
     return {
         onOk(): void {
             store.addItem(this.newTaskName!)
@@ -95,6 +95,6 @@ stateProviders.bind(TodoList, (props) => {
 
 const demoForm = new DemoForm()
 
-stateProviders.bind(ValidatorPage, (props): ValidatorPage['StateType'] => {
+stateProviders.bind(ValidatorPage, (props): ValidatorPage['autoState'] => {
     return demoForm
 })

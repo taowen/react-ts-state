@@ -14,6 +14,7 @@ interface State {
     value?: any
     onChange?(e: React.ChangeEvent<HTMLElementWithValue>): void
     validateStatus?: FormItemProps['validateStatus']
+    help?: FormItemProps['help']
 }
 
 export const withValidation = <P extends Record<string, any>>(Component: React.ComponentType<P>) =>
@@ -31,9 +32,15 @@ export const withValidation = <P extends Record<string, any>>(Component: React.C
             const fieldRef = (field as FieldRefProxy).__FIELD_REF
             const { getState } = fieldRef.comp.props as any
             const form = getState(fieldRef.comp.constructor)
+            const validateStatusPath = fieldRef.path.slice() // copy
+            validateStatusPath[validateStatusPath.length - 1] += '_validateStatus'
+            const helpPath = fieldRef.path.slice(0) // copy
+            helpPath[validateStatusPath.length - 1] += '_help'
             this.disposeAutoRun = mobx.autorun(() => {
                 this.setState({
                     value: getValue(form, fieldRef.path),
+                    validateStatus: getValue(form, validateStatusPath),
+                    help: getValue(form, helpPath),
                     onChange(e: React.ChangeEvent<HTMLElementWithValue>) {
                         setValue(form, fieldRef.path, e.target.value)
                     }
@@ -50,7 +57,7 @@ export const withValidation = <P extends Record<string, any>>(Component: React.C
         render() {
             const { label, field, hasFeedback, ...origProps } = this.props
             return (
-                <Form.Item label={label} validateStatus={this.state.validateStatus} hasFeedback={hasFeedback}>
+                <Form.Item label={label} validateStatus={this.state.validateStatus} help={this.state.help} hasFeedback={hasFeedback}>
                     <Component {...origProps as P} value={this.state.value} onChange={this.state.onChange} />
                 </Form.Item>)
         }
