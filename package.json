@@ -4,6 +4,7 @@
     "version": "1.0.0",
     "scripts": {
         "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx}' --exclude 'src/tests/*.{ts,tsx}'",
+        "storybook": "start-storybook -p 8081",
         "start": "webpack-dev-server",
         "test": "jest",
         "build": "tsc && webpack --progress",
@@ -19,6 +20,8 @@
         "react-router-dom": "~4.3.1"
     },
     "devDependencies": {
+        "@storybook/addon-knobs": "^5.0.6",
+        "@storybook/react": "^5.0.6",
         "@types/chai": "^4.1.7",
         "@types/mocha": "^5.2.6",
         "@types/node": "^10.12.18",
@@ -28,6 +31,7 @@
         "@types/react-router": "~4.4.3",
         "@types/react-router-config": "~1.1.0",
         "@types/react-router-dom": "~4.3.1",
+        "@types/storybook__react": "^4.0.1",
         "chai": "^4.2.0",
         "css-loader": "^2.1.1",
         "html-webpack-plugin": "^3.2.0",
@@ -35,10 +39,13 @@
         "less-loader": "^4.1.0",
         "mini-css-extract-plugin": "^0.5.0",
         "mocha": "^6.1.2",
+        "react-docgen-typescript-loader": "^3.1.0",
+        "react-docgen-typescript-webpack-plugin": "^1.1.0",
         "source-map-loader": "^0.2.4",
         "ts-import-plugin": "^1.5.2",
         "ts-loader": "^5.3.3",
         "ts-node": "^8.0.3",
+        "tsconfig-paths-webpack-plugin": "^3.2.0",
         "tslint": "^5.15.0",
         "tslint-loader": "^3.5.4",
         "typed-css-modules-webpack-plugin": "^0.1.0",
