@@ -8,16 +8,19 @@ interface Props extends AutoComponentProps<State> {
 }
 
 interface State {
+    pendingItemsCount: number
+    totalItemsCount: number
     addNewTodo(): void
 }
 
 export class TodoPage extends AutoComponent<Props, State> {
     public render() {
+        let state = this.state
         return (
             <div>
-                <Card bordered title="Todo List" style={{ margin: "16px 16px" }}>
+                <Card bordered title={`Todo List (${state.pendingItemsCount} / ${state.totalItemsCount})`} style={{ margin: "16px 16px" }}>
                     <Button type="primary" icon="plus"
-                        onClick={() => { this.state.addNewTodo() }}>New Task</Button>
+                        onClick={() => { state.addNewTodo() }}>New Task</Button>
                     <TodoList {...this.props}/>
                 </Card>
                 <NewTodo {...this.props} />

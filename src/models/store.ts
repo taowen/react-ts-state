@@ -33,11 +33,13 @@ export const store = new Store() // the domain model
 
 export const stateProviders = new StateProviders() // bind domain model into various view model
 
-stateProviders.bind(TodoPage, (props) => {
+stateProviders.bind(TodoPage, (props): TodoPage['StateType'] => {
     return {
         addNewTodo() {
             store.addingNewTodo = true
-        }
+        },
+        totalItemsCount: store.todoItems.length,
+        pendingItemsCount: store.todoItems.filter((item) => !item.isCompleted).length
     }
 })
 
