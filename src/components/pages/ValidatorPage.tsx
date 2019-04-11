@@ -2,7 +2,8 @@ import { Button, Form, Select } from "antd";
 import * as React from "react";
 import { AutoComponent } from "../../concept/AutoComponent";
 import { fieldsOf } from "../../concept/FieldRef";
-import { VInput, VSelect } from "../../concept/validation/WithValidation";
+import { VInput, VSelect, VDatePicker } from "../../concept/validation/WithValidation";
+import { Moment } from "moment";
 
 interface Props {
 }
@@ -14,6 +15,7 @@ export interface State {
     }
     password: string
     interests: string[]
+    deliveryDate: Moment
     onSubmit(): void
 }
 
@@ -32,6 +34,7 @@ class ValidatorPage extends AutoComponent<Props, State> {
                     <Select.Option key="a4">a4</Select.Option>
                     <Select.Option key="a5">a5</Select.Option>
                 </VSelect>
+                <VDatePicker field={fieldsOf(this).deliveryDate} />
                 <Form.Item>
                     <Button type="primary" htmlType="submit" onClick={() => { this.state.onSubmit() }}>Submit</Button>
                 </Form.Item>

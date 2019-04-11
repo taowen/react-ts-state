@@ -1,4 +1,4 @@
-import { Form, Input, Select } from "antd";
+import { Form, Input, Select, DatePicker } from "antd";
 import { FormItemProps } from "antd/lib/form";
 import * as mobx from "mobx";
 import * as React from "react";
@@ -106,3 +106,4 @@ function setValue(state: Record<string, any>, path: string[], value: any) {
 
 export const VInput = withValidation(Input)
 export const VSelect = withValidation(Select)
+export const VDatePicker = withValidation(DatePicker)

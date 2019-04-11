@@ -15,11 +15,12 @@ export interface FieldOptions {
     defaultValue?: any
     label?: string
     required?: boolean
+    placeholder?: string
+    help?: string
     validateOnChange?: boolean
     validateRequired?: FieldValidator
     validate?: FieldValidator
-    placeholder?: string
-    help?: string
+    onChange?: (options: FieldOptions) => void
 }
 
 export function field(options: FieldOptions): (target: Record<string, any>, propertyKey: string) => void
@@ -62,18 +63,21 @@ function setMeta(target: any, propertyKey: string, meta: FieldMeta) {
 export function validateField(formObj: Record<string, any>, fieldName: string, options: FieldOptions) {
     if (options.required) {
         if (!validateRequired(formObj, fieldName, options)) {
-            return
+            return false
         }
     }
-    if (options.validate) {
-        const result = options.validate(formObj[fieldName], options)
-        if (result && isInvalid(result.validateStatus)) {
-            formObj[fieldName + '_validateStatus'] = result.validateStatus
-            if (result.help) {
-                formObj[fieldName + '_help'] = result.help
-            }
-        }
+    if (!options.validate) {
+        return true
     }
+    const result = options.validate(formObj[fieldName], options)
+    if (result && isInvalid(result.validateStatus)) {
+        formObj[fieldName + '_validateStatus'] = result.validateStatus
+        if (result.help) {
+            formObj[fieldName + '_help'] = result.help
+        }
+        return false
+    }
+    return true
 }
 
 function validateRequired(formObj: Record<string, any>, fieldName: string, options: FieldOptions): boolean {
@@ -103,6 +107,11 @@ function isInvalid(validateStatus: ValidateStatus) {
 export function onChangeField(formObj: Record<string, any>, fieldName: string, options: FieldOptions) {
     if (options.validateOnChange) {
         form.form.resetValidateStatus(formObj, fieldName)
-        validateField(formObj, fieldName, options)
+        if (!validateField(formObj, fieldName, options)) {
+            return
+        }
+    }
+    if (options.onChange) {
+        options.onChange(options)
     }
 }
