@@ -1,13 +1,20 @@
 import * as mobx from "mobx";
 import * as form from "./form"
 import "reflect-metadata"
+import { FormItemProps } from "antd/lib/form";
 
 const METADATA_KEY = 'validation:field'
 
-interface FieldOptions {
+type FieldValidator = (val: any) => {
+    validateStatus: FormItemProps['validateStatus']
+    help?: string
+}
+
+export interface FieldOptions {
     defaultValue?: any
     label?: string
     required?: boolean
+    validateRequired?: FieldValidator
     placeholder?: string
     help?: string
 }

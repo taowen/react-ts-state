@@ -126,7 +126,7 @@ describe('resetValue', () => {
     })
 })
 
-describe('validate', () => {
+describe('validate required', () => {
     it('should validate required field', () => {
         @form
         class MyForm {
@@ -149,5 +149,17 @@ describe('validate', () => {
         let formObj = new MyForm()
         form.validate(formObj)
         expect(form.getValidateStatus(formObj.subForm, 'myField1')).eq('error')
+    })
+    it('allow use customized validateRequired', () => {
+        @form
+        class MyForm {
+            @field({ required: true, validateRequired: (val) => {
+                return { validateStatus: 'warning' }
+            }})
+            myField1: string
+        }
+        let formObj = new MyForm()
+        form.validate(formObj)
+        expect(form.getValidateStatus(formObj, 'myField1')).eq('warning')
     })
 })

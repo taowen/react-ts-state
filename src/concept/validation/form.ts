@@ -1,6 +1,7 @@
 import { FormItemProps } from "antd/lib/form/FormItem";
 import * as field from "./field";
 
+type ValidateStatus = FormItemProps['validateStatus']
 const METADATA_KEY = 'validation:form'
 
 export function form<T extends { new(...args: any[]): {} }>(target: T) {
@@ -32,9 +33,8 @@ form.validate = (formObj: Record<string, any>): void => {
     for (let fieldName of meta.fields) {
         let meta = field.getMeta(formObj, fieldName)!
         const options = meta.options
-        if (options.required && !formObj[fieldName]) {
-            formObj[fieldName + '_validateStatus'] = 'error'
-            formObj[fieldName + '_help'] = `${options.label} is required`
+        if (options.required) {
+            validateRequired(formObj, fieldName, options)
         }
     }
     for (let fieldValue of Object.values(formObj)) {
@@ -42,6 +42,27 @@ form.validate = (formObj: Record<string, any>): void => {
             form.validate(fieldValue)
         }
     }
+}
+
+function validateRequired(formObj: Record<string, any>, fieldName: string, options: field.FieldOptions) {
+    if (!options.validateRequired) {
+        if (!formObj[fieldName]) {
+            formObj[fieldName + '_validateStatus'] = 'error'
+            formObj[fieldName + '_help'] = `${options.label} is required`
+        }
+        return
+    }
+    const result = options.validateRequired(formObj[fieldName])
+    if (isInvalid(result.validateStatus)) {
+        formObj[fieldName + '_validateStatus'] = result.validateStatus
+        if (result.help) {
+            formObj[fieldName + '_help'] = result.help
+        }
+    }
+}
+
+function isInvalid(validateStatus: ValidateStatus) {
+    return validateStatus && validateStatus !== 'success'
 }
 
 form.getLabel = <F extends Record<string, any>>(formObj: F, fieldName: keyof F): string=> {
@@ -60,7 +81,7 @@ form.isRequired = <F extends Record<string, any>>(formObj: F, fieldName: keyof F
     return formObj[fieldName + '_required']
 }
 
-form.getValidateStatus = <F extends Record<string, any>>(formObj: F, fieldName: keyof F): FormItemProps['validateStatus'] => {
+form.getValidateStatus = <F extends Record<string, any>>(formObj: F, fieldName: keyof F): ValidateStatus => {
     return formObj[fieldName + '_validateStatus']
 }
 
