@@ -33,9 +33,7 @@ form.validate = (formObj: Record<string, any>): void => {
     for (let fieldName of meta.fields) {
         let meta = field.getMeta(formObj, fieldName)!
         const options = meta.options
-        if (options.required) {
-            validateRequired(formObj, fieldName, options)
-        }
+        validateField(formObj, fieldName, options)
     }
     for (let fieldValue of Object.values(formObj)) {
         if (getMetaFromObject(fieldValue)) {
@@ -44,13 +42,31 @@ form.validate = (formObj: Record<string, any>): void => {
     }
 }
 
-function validateRequired(formObj: Record<string, any>, fieldName: string, options: field.FieldOptions) {
+function validateField(formObj: Record<string, any>, fieldName: string, options: field.FieldOptions) {
+    if (options.required) {
+        if (!validateRequired(formObj, fieldName, options)) {
+            return
+        }
+    }
+    if (options.validate) {
+        const result = options.validate(formObj[fieldName])
+        if (isInvalid(result.validateStatus)) {
+            formObj[fieldName + '_validateStatus'] = result.validateStatus
+            if (result.help) {
+                formObj[fieldName + '_help'] = result.help
+            }
+        }
+    }
+}
+
+function validateRequired(formObj: Record<string, any>, fieldName: string, options: field.FieldOptions): boolean {
     if (!options.validateRequired) {
         if (!formObj[fieldName]) {
             formObj[fieldName + '_validateStatus'] = 'error'
             formObj[fieldName + '_help'] = `${options.label} is required`
+            return false
         }
-        return
+        return true
     }
     const result = options.validateRequired(formObj[fieldName])
     if (isInvalid(result.validateStatus)) {
@@ -58,7 +74,9 @@ function validateRequired(formObj: Record<string, any>, fieldName: string, optio
         if (result.help) {
             formObj[fieldName + '_help'] = result.help
         }
+        return false
     }
+    return true
 }
 
 function isInvalid(validateStatus: ValidateStatus) {

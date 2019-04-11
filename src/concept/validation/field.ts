@@ -15,6 +15,7 @@ export interface FieldOptions {
     label?: string
     required?: boolean
     validateRequired?: FieldValidator
+    validate?: FieldValidator
     placeholder?: string
     help?: string
 }
