@@ -1,18 +1,19 @@
-import { Button, Form } from "antd";
+import { Button, Form, Select } from "antd";
 import * as React from "react";
 import { AutoComponent } from "../../concept/AutoComponent";
 import { fieldsOf } from "../../concept/FieldRef";
-import { VInput } from "../../concept/validation/WithValidation";
+import { VInput, VSelect } from "../../concept/validation/WithValidation";
 
 interface Props {
 }
 
 export interface State {
     userName: {
-        firstName: string,
+        firstName: string
         lastName: string
     }
     password: string
+    interests: string[]
     onSubmit(): void
 }
 
@@ -24,6 +25,13 @@ class ValidatorPage extends AutoComponent<Props, State> {
                 <VInput field={fieldsOf(this).userName.firstName} />
                 <VInput field={fieldsOf(this).userName.lastName} />
                 <VInput field={fieldsOf(this).password} />
+                <VSelect field={fieldsOf(this).interests} mode="multiple" >
+                    <Select.Option key="a1">a1</Select.Option>
+                    <Select.Option key="a2">a2</Select.Option>
+                    <Select.Option key="a3">a3</Select.Option>
+                    <Select.Option key="a4">a4</Select.Option>
+                    <Select.Option key="a5">a5</Select.Option>
+                </VSelect>
                 <Form.Item>
                     <Button type="primary" htmlType="submit" onClick={() => { this.state.onSubmit() }}>Submit</Button>
                 </Form.Item>

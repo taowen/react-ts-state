@@ -57,7 +57,6 @@ module.exports = {
                     {
                         loader: 'ts-loader',
                         options: {
-                            transpileOnly: true,
                             getCustomTransformers: () => ({
                                 before: [tsImportPluginFactory({
                                     libraryName: 'antd',

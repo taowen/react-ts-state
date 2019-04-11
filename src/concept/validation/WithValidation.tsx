@@ -47,15 +47,17 @@ export const withValidation = <P extends Record<string, any>>(Component: React.C
             const leafProp = fieldRef.path[fieldRef.path.length - 1]
             this.disposeAutoRun = mobx.autorun(() => {
                 const leaf = getValue(form, leafPath)
+                const value = getValue(leaf, [leafProp])
                 this.setState({
-                    value: getValue(leaf, [leafProp]),
+                    value: value,
                     validateStatus: getValue(leaf, [leafProp + '_validateStatus']),
                     help: getValue(leaf, [leafProp + '_help']),
                     required: getValue(leaf, [leafProp + '_required']),
                     placeholder: getValue(leaf, [leafProp + '_placeholder']),
                     label: getValue(leaf, [leafProp + '_label']),
                     onChange(e: React.ChangeEvent<HTMLElementWithValue>) {
-                        setValue(form, fieldRef.path, e.target.value)
+                        const value = e.target ? e.target.value : e
+                        setValue(form, fieldRef.path, value)
                     }
                 })
             })

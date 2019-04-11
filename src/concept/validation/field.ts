@@ -9,7 +9,7 @@ export type ValidateStatus = FormItemProps['validateStatus']
 export type FieldValidator = (val: any, fieldOptions: FieldOptions) => {
     validateStatus: ValidateStatus
     help?: string
-}
+} | undefined
 
 export interface FieldOptions {
     defaultValue?: any
@@ -56,4 +56,45 @@ export function getMeta(target: any, propertyKey: string): FieldMeta|undefined {
 
 function setMeta(target: any, propertyKey: string, meta: FieldMeta) {
     Reflect.defineMetadata(METADATA_KEY, meta, target, propertyKey)
+}
+
+export function validateField(formObj: Record<string, any>, fieldName: string, options: FieldOptions) {
+    if (options.required) {
+        if (!validateRequired(formObj, fieldName, options)) {
+            return
+        }
+    }
+    if (options.validate) {
+        const result = options.validate(formObj[fieldName], options)
+        if (result && isInvalid(result.validateStatus)) {
+            formObj[fieldName + '_validateStatus'] = result.validateStatus
+            if (result.help) {
+                formObj[fieldName + '_help'] = result.help
+            }
+        }
+    }
+}
+
+function validateRequired(formObj: Record<string, any>, fieldName: string, options: FieldOptions): boolean {
+    if (!options.validateRequired) {
+        if (!formObj[fieldName]) {
+            formObj[fieldName + '_validateStatus'] = 'error'
+            formObj[fieldName + '_help'] = `${options.label} is required`
+            return false
+        }
+        return true
+    }
+    const result = options.validateRequired(formObj[fieldName], options)
+    if (result && isInvalid(result.validateStatus)) {
+        formObj[fieldName + '_validateStatus'] = result.validateStatus
+        if (result.help) {
+            formObj[fieldName + '_help'] = result.help
+        }
+        return false
+    }
+    return true
+}
+
+function isInvalid(validateStatus: ValidateStatus) {
+    return validateStatus && validateStatus !== 'success'
 }

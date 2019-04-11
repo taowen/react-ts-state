@@ -12,6 +12,15 @@ export class DemoForm implements ValidatorPage.State {
     @field({ required: true, placeholder: 'must be complex enough', help: 'blah' })
     password: string
 
+    @field({
+        validate: (val) => {
+            if (val.length > 3) {
+                return { validateStatus: 'warning', help: 'selected too many options' }
+            }
+        }
+    })
+    interests: string[];
+
     onSubmit() {
         form.validate(this)
     }
@@ -22,6 +31,6 @@ class SubForm {
     @field({ label: 'first name', validate: byRegex(/^[a-zA-Z0-9]+$/) })
     firstName: string
 
-    @field({ label: 'last name', validate: byRegex(/^[a-zA-Z0-9]+$/)  })
+    @field({ label: 'last name', validate: byRegex(/^[a-zA-Z0-9]+$/) })
     lastName: string
 }
