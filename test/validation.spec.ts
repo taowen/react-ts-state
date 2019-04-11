@@ -31,3 +31,75 @@ describe('init options', () => {
         expect(form.getHelp(new MyForm().subForm, 'myField')).eq('some help')
     })
 })
+
+describe('resetValidateStatus', () => {
+    it('should reset single field', () => {
+        @form
+        class MyForm {
+            @field({ required: true })
+            myField: string
+        }
+        let formObj = new MyForm()
+        form.validate(formObj)
+        expect(form.getValidateStatus(formObj, 'myField')).eq('error')
+        form.resetValidateStatus(formObj, 'myField')
+        expect(form.getValidateStatus(formObj, 'myField')).undefined
+    })
+    it('should reset all fields if no propertyKey specified', () => {
+        @form
+        class MyForm {
+            @field({ required: true })
+            myField1: string
+            @field({ required: true })
+            myField2: string
+        }
+        let formObj = new MyForm()
+        form.validate(formObj)
+        form.resetValidateStatus(formObj)
+        expect(form.getValidateStatus(formObj, 'myField1')).undefined
+        expect(form.getValidateStatus(formObj, 'myField2')).undefined
+    })
+    it('should reset nested form', () => {
+        @form
+        class MyForm {
+            subForm = new SubForm()
+        }
+        class SubForm {
+            @field({ required: true })
+            myField1: string
+            @field({ required: true })
+            myField2: string
+        }
+        let formObj = new MyForm()
+        form.validate(formObj)
+        form.resetValidateStatus(formObj)
+        expect(form.getValidateStatus(formObj.subForm, 'myField1')).undefined
+        expect(form.getValidateStatus(formObj.subForm, 'myField2')).undefined
+    })
+})
+
+describe('validate', () => {
+    it('should validate required field', () => {
+        @form
+        class MyForm {
+            @field({required: true})
+            myField: string
+        }
+        let formObj = new MyForm()
+        form.validate(formObj)
+        expect(form.getValidateStatus(formObj, 'myField')).eq('error')
+    })
+    it('should validate nested form', () => {
+        @form
+        class MyForm {
+            subForm = new SubForm()
+        }
+        class SubForm {
+            @field({ required: true })
+            myField1: string
+        }
+        let formObj = new MyForm()
+        form.validate(formObj)
+        expect(form.getValidateStatus(formObj.subForm, 'myField1')).eq('error')
+    })
+})

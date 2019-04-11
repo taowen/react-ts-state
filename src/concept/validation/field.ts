@@ -17,7 +17,12 @@ export function field(target: any, propertyKey?: string) {
     let options = {}
     const decorator = (target: any, propertyKey: string) => {
         form.registerField(target.constructor, propertyKey)
-        getMeta(target, propertyKey).options = options
+        let meta = getMeta(target, propertyKey)
+        if (!meta) {
+            meta = {options: {}}
+            setMeta(target, propertyKey, meta)
+        }
+        meta.options = options
         mobx.observable(target, propertyKey + '_validateStatus')
         mobx.observable(target, propertyKey + '_help')
         mobx.observable(target, propertyKey + '_placeholder')
@@ -35,11 +40,10 @@ interface FieldMeta {
     options: FieldOptions
 }
 
-export function getMeta(target: any, propertyKey: string): FieldMeta {
-    let meta = Reflect.getMetadata(METADATA_KEY, target, propertyKey) as FieldMeta
-    if (!meta) {
-        meta = { options: {} }
-        Reflect.defineMetadata(METADATA_KEY, meta, target, propertyKey)
-    }
-    return meta
+export function getMeta(target: any, propertyKey: string): FieldMeta|undefined {
+    return Reflect.getMetadata(METADATA_KEY, target, propertyKey) as FieldMeta
+}
+
+function setMeta(target: any, propertyKey: string, meta: FieldMeta) {
+    Reflect.defineMetadata(METADATA_KEY, meta, target, propertyKey)
 }

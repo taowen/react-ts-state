@@ -1,51 +1,92 @@
-import * as field from "./field"
+import { FormItemProps } from "antd/lib/form/FormItem";
+import * as field from "./field";
 
 const METADATA_KEY = 'validation:form'
 
 export function form<T extends { new(...args: any[]): {} }>(target: T) {
-    return class extends target {
+    let meta = getMeta(target)
+    if (!meta) {
+        meta = {fields: []}
+        setMeta(target, meta)
+    }
+    const wrapper = class extends target {
 
         constructor(...args: any[]) {
-            super(...args)
+            super(...args);
+            // wrapper makes Reflet.getMetadata hard to get actual constructor
+            // set the metadata to instance to make things easier
+            (this as any).__META = meta
             // so all methods can be accessed as properties
             assignProtoMethods(this)
-            assignFieldOptions(target, this)
-        }
-
-        validate(): void {
-            for (let fieldName of getMeta(target).fields) {
-                let meta = field.getMeta(this, fieldName)
-                const options = meta.options
-                let obj = this as Record<string, any>
-                if (options.required && !obj[fieldName]) {
-                    obj[fieldName + '_validateStatus'] = 'error'
-                    obj[fieldName + '_help'] = options.help || `${options.label} is required`
-                }
-            }
+            assignFieldOptions(this)
         }
     }
+    return wrapper
 }
 
 form.validate = (formObj: Record<string, any>): void => {
-    if (formObj.validate) {
-        formObj.validate()
+    const meta = getMetaFromObject(formObj)
+    if (!meta) {
+        throw new Error('requires object marked with @form')
+    }
+    for (let fieldName of meta.fields) {
+        let meta = field.getMeta(formObj, fieldName)!
+        const options = meta.options
+        if (options.required && !formObj[fieldName]) {
+            formObj[fieldName + '_validateStatus'] = 'error'
+            formObj[fieldName + '_help'] = `${options.label} is required`
+        }
+    }
+    for (let fieldValue of Object.values(formObj)) {
+        if (getMetaFromObject(fieldValue)) {
+            form.validate(fieldValue)
+        }
     }
 }
 
-form.getLabel = <F extends Record<string, any>>(formObj: F, fieldName: keyof F) => {
+form.getLabel = <F extends Record<string, any>>(formObj: F, fieldName: keyof F): string=> {
     return formObj[fieldName + '_label']
 }
 
-form.getPlaceholder = <F extends Record<string, any>>(formObj: F, fieldName: keyof F) => {
+form.getPlaceholder = <F extends Record<string, any>>(formObj: F, fieldName: keyof F): string => {
     return formObj[fieldName + '_placeholder']
 }
 
-form.getHelp = <F extends Record<string, any>>(formObj: F, fieldName: keyof F) => {
+form.getHelp = <F extends Record<string, any>>(formObj: F, fieldName: keyof F): string => {
     return formObj[fieldName + '_help']
 }
 
 form.isRequired = <F extends Record<string, any>>(formObj: F, fieldName: keyof F): boolean => {
     return formObj[fieldName + '_required']
+}
+
+form.getValidateStatus = <F extends Record<string, any>>(formObj: F, fieldName: keyof F): FormItemProps['validateStatus'] => {
+    return formObj[fieldName + '_validateStatus']
+}
+
+form.resetValidateStatus = <F extends Record<string, any>>(formObj: F, propertyKey?: keyof F) => {
+    if (propertyKey) {
+        formObj[propertyKey + '_validateStatus'] = undefined
+        const fieldValue = formObj[propertyKey]
+        // is nested form?
+        if (getMetaFromObject(fieldValue)) {
+            form.resetValidateStatus(fieldValue)
+        }
+        return
+    }
+    const meta = getMetaFromObject(formObj)
+    if (!meta) {
+        throw new Error('requires object marked with @form')
+    }
+    for (let field of meta.fields) {
+        form.resetValidateStatus(formObj, field)
+    }
+    for (let fieldValue of Object.values(formObj)) {
+        // is nested form?
+        if (getMetaFromObject(fieldValue)) {
+            form.resetValidateStatus(fieldValue)
+        }
+    }
 }
 
 
@@ -58,10 +99,11 @@ function assignProtoMethods(obj: any) {
     }
 }
 
-function assignFieldOptions(target: Function, obj: any) {
+function assignFieldOptions(obj: any) {
+    const meta = getMetaFromObject(obj)!
     // @field might not be initialized with value, so we can not iterate props to find all fields
-    for (let fieldName of getMeta(target).fields) {
-        let meta = field.getMeta(obj, fieldName)
+    for (let fieldName of meta.fields) {
+        let meta = field.getMeta(obj, fieldName)!
         if (!meta.options.label) {
             meta.options.label = fieldName
         }
@@ -73,8 +115,8 @@ function assignFieldOptions(target: Function, obj: any) {
     // nested form might not be marked as @field, we iterate all props instead
     // nested form must be initialized
     for (let fieldValue of Object.values(obj)) {
-        if (fieldValue && getMeta(fieldValue.constructor).fields.length > 0) {
-            assignFieldOptions(fieldValue.constructor, fieldValue)
+        if (fieldValue && getMetaFromObject(fieldValue)) {
+            assignFieldOptions(fieldValue)
         }
     }
 }
@@ -84,14 +126,28 @@ interface FormMeta {
 }
 
 export function registerField(target: Function, field: string) {
-    getMeta(target).fields.push(field)
+    let meta = getMeta(target)
+    if (!meta) {
+        meta = {fields: []}
+        setMeta(target, meta)
+    }
+    meta.fields.push(field)
 }
 
-export function getMeta(target: Function): FormMeta {
-    let meta = Reflect.getMetadata(METADATA_KEY, target) as FormMeta
-    if (!meta) {
-        meta = { fields: [] }
-        Reflect.defineMetadata(METADATA_KEY, meta, target)
+export function getMetaFromObject(target: Record<string, any>): FormMeta|undefined {
+    if (!target) {
+        return undefined
     }
-    return meta
+    if (target.__META) {
+        return target.__META
+    }
+    return getMeta(target.constructor)
+}
+
+export function getMeta(target: Function): FormMeta|undefined {
+    return Reflect.getMetadata(METADATA_KEY, target) as FormMeta
+}
+
+function setMeta(target: Function, meta: FormMeta) {
+    Reflect.defineMetadata(METADATA_KEY, meta, target)
 }
