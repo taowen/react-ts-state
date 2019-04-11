@@ -58,6 +58,8 @@ export const withValidation = <P extends Record<string, any>>(Component: React.C
                     onChange(e: React.ChangeEvent<HTMLElementWithValue>) {
                         const value = e.target ? e.target.value : e
                         setValue(form, fieldRef.path, value)
+                        const onChange = getValue(leaf, [leafProp + '_onChange'])
+                        onChange()
                     }
                 })
             })

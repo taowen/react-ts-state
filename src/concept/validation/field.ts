@@ -15,6 +15,7 @@ export interface FieldOptions {
     defaultValue?: any
     label?: string
     required?: boolean
+    validateOnChange?: boolean
     validateRequired?: FieldValidator
     validate?: FieldValidator
     placeholder?: string
@@ -97,4 +98,11 @@ function validateRequired(formObj: Record<string, any>, fieldName: string, optio
 
 function isInvalid(validateStatus: ValidateStatus) {
     return validateStatus && validateStatus !== 'success'
+}
+
+export function onChangeField(formObj: Record<string, any>, fieldName: string, options: FieldOptions) {
+    if (options.validateOnChange) {
+        form.form.resetValidateStatus(formObj, fieldName)
+        validateField(formObj, fieldName, options)
+    }
 }

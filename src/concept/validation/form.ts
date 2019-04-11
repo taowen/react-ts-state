@@ -116,11 +116,12 @@ function assignProtoMethods(obj: any) {
 function assignFieldOptions(obj: Record<string, any>) {
     const meta = getMetaFromObject(obj)!
     // @field might not be initialized with value, so we can not iterate props to find all fields
-    for (let fieldName of meta.fields) {
+    for (let fieldName of meta.fields) { 
         let meta = field.getMeta(obj, fieldName)!
         if (!meta.options.label) {
             meta.options.label = fieldName
         }
+        obj[fieldName + '_onChange'] = field.onChangeField.bind(null, obj, fieldName, meta.options)
         for (let [k, v] of Object.entries(meta.options)) {
             // for example: password_label
             if (k === 'defaultValue') {

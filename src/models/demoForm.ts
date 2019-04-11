@@ -13,6 +13,7 @@ export class DemoForm implements ValidatorPage.State {
     password: string
 
     @field({
+        validateOnChange: true,
         validate: (val) => {
             if (val.length > 3) {
                 return { validateStatus: 'warning', help: 'selected too many options' }
