@@ -59,7 +59,11 @@ form.isRequired = <F extends Record<string, any>>(formObj: F, fieldName: keyof F
 }
 
 form.setRequired = <F extends Record<string, any>>(formObj: F, fieldName: keyof F, required: boolean): void => {
+    const options = field.getMeta(formObj, fieldName as any)!.options
+    options.required = required
     formObj[fieldName + '_required'] = required
+    formObj[fieldName + '_validateStatus'] = undefined
+    formObj[fieldName + '_help'] = options.help
 }
 
 form.getValidateStatus = <F extends Record<string, any>>(formObj: F, fieldName: keyof F): field.ValidateStatus => {

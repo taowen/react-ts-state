@@ -3,6 +3,7 @@ import { field, FieldValidator, ValidateStatus } from "../concept/validation/fie
 import { form } from "../concept/validation/form";
 import { byRegex } from "../concept/validation/validator";
 import { Moment } from "moment";
+import * as mobx from "mobx"
 
 @form
 export class DemoForm implements ValidatorPage.State {
@@ -16,16 +17,18 @@ export class DemoForm implements ValidatorPage.State {
     @field({
         validateOnChange: true,
         validate: (val) => {
-            if (val.length > 3) {
+            if (val && val.length > 3) {
                 return { validateStatus: 'warning', help: 'selected too many options' }
             }
         }
     })
     interests: string[];
 
-    @field({onChange: (e) => {
-        form.setRequired(e.form, 'deliveryDate', e.value)
-    }})
+    @field({
+        onChange: (e) => {
+            form.setRequired(e.form, 'deliveryDate', e.value)
+        }
+    })
     deliverToHome: boolean
 
     @field

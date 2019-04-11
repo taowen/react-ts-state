@@ -45,6 +45,7 @@ export function field(target: any, propertyKey?: string) {
         mobx.observable(target, propertyKey + '_help')
         mobx.observable(target, propertyKey + '_placeholder')
         mobx.observable(target, propertyKey + '_label')
+        mobx.observable(target, propertyKey + '_required')
         return mobx.observable(target, propertyKey!)
     }
     if (!propertyKey) {

@@ -31,6 +31,8 @@ type Field<S> = {
 
 export interface HTMLElementWithValue {
     value: any
+    type?: string
+    checked?: boolean
 }
 
 export interface FieldRefProxy {

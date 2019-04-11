@@ -56,7 +56,14 @@ export const withValidation = <P extends Record<string, any>>(Component: React.C
                     placeholder: getValue(leaf, [leafProp + '_placeholder']),
                     label: getValue(leaf, [leafProp + '_label']),
                     onChange(e: React.ChangeEvent<HTMLElementWithValue>) {
-                        const value = e.target ? e.target.value : e
+                        let value: any = e
+                        if (e.target) {
+                            if (e.target.type === 'checkbox') {
+                                value = e.target.checked
+                            } else {
+                                value = e.target.value
+                            }
+                        }
                         setValue(form, fieldRef.path, value)
                         const onChange = getValue(leaf, [leafProp + '_onChange'])
                         onChange()
@@ -79,7 +86,7 @@ export const withValidation = <P extends Record<string, any>>(Component: React.C
             return (
                 <Form.Item label={label} hasFeedback={hasFeedback} colon={colon}
                     validateStatus={state.validateStatus} help={state.help} required={state.required}>
-                    <Component {...origProps as P} value={state.value} onChange={state.onChange} placeholder={placeholder} />
+                    <Component {...origProps as P} checked={state.value} value={state.value} onChange={state.onChange} placeholder={placeholder} />
                 </Form.Item>)
         }
     };
