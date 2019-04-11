@@ -5,6 +5,7 @@ import "reflect-metadata"
 const METADATA_KEY = 'validation:field'
 
 interface FieldOptions {
+    defaultValue?: any
     label?: string
     required?: boolean
     placeholder?: string

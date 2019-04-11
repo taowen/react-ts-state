@@ -99,7 +99,7 @@ function assignProtoMethods(obj: any) {
     }
 }
 
-function assignFieldOptions(obj: any) {
+function assignFieldOptions(obj: Record<string, any>) {
     const meta = getMetaFromObject(obj)!
     // @field might not be initialized with value, so we can not iterate props to find all fields
     for (let fieldName of meta.fields) {
@@ -109,7 +109,11 @@ function assignFieldOptions(obj: any) {
         }
         for (let [k, v] of Object.entries(meta.options)) {
             // for example: password_label
-            (obj as any)[fieldName + '_' + k] = v
+            if (k === 'defaultValue') {
+                obj[fieldName] = v
+            } else {
+                obj[fieldName + '_' + k] = v
+            }
         }
     }
     // nested form might not be marked as @field, we iterate all props instead

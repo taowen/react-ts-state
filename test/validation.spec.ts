@@ -7,13 +7,14 @@ describe('init options', () => {
     it('should set label and other optiosn properly', () => {
         @form
         class MyForm {
-            @field({ label: 'hello', required: true, placeholder: 'awsome field', help: 'some help' })
+            @field({ label: 'hello', required: true, placeholder: 'awsome field', help: 'some help', defaultValue: 'abc' })
             myField: string
         }
         expect(form.getLabel(new MyForm(), 'myField')).eq('hello')
         expect(form.isRequired(new MyForm(), 'myField')).true
         expect(form.getPlaceholder(new MyForm(), 'myField')).eq('awsome field')
         expect(form.getHelp(new MyForm(), 'myField')).eq('some help')
+        expect(new MyForm().myField).eq('abc')
     })
     it('should set options even if inside nested object', () => {
         @form

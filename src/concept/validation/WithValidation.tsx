@@ -4,6 +4,11 @@ import * as mobx from "mobx";
 import * as React from "react";
 import { FieldRefProxy, HTMLElementWithValue } from "../FieldRef";
 
+// make a input control to be bindable to @form
+// the binding is done in two steps
+// the @form bind to the form component via stateProviders
+// the @field bind to the WithValidation<C> component via fieldsOf(this).xxx
+
 interface Props {
     field: any | FieldRefProxy
     hasFeedback?: boolean
