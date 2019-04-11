@@ -8,7 +8,7 @@ export class DemoForm implements ValidatorPage.State {
     @field
     userName = new SubForm()
 
-    @field({required: true, placeholder: 'must be complex enough'})
+    @field({required: true, placeholder: 'must be complex enough', help: 'blah'})
     password: string
 
     onSubmit() {

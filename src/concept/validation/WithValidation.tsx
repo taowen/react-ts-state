@@ -7,6 +7,7 @@ import { FieldRefProxy, HTMLElementWithValue } from "../FieldRef";
 interface Props {
     field: any | FieldRefProxy
     hasFeedback?: boolean
+    colon?: boolean
     label?: string
     placeholder?: string
 }
@@ -62,12 +63,13 @@ export const withValidation = <P extends Record<string, any>>(Component: React.C
         }
 
         render() {
-            let { label, placeholder, field, hasFeedback, ...origProps } = this.props
+            let { label, placeholder, field, hasFeedback, colon, ...origProps } = this.props
             const state = this.state
             label = this.state.label || label
             placeholder = this.state.placeholder || placeholder
             return (
-                <Form.Item label={label} validateStatus={state.validateStatus} help={state.help} required={state.required} hasFeedback={hasFeedback}>
+                <Form.Item label={label} hasFeedback={hasFeedback} colon={colon}
+                    validateStatus={state.validateStatus} help={state.help} required={state.required}>
                     <Component {...origProps as P} value={state.value} onChange={state.onChange} placeholder={placeholder} />
                 </Form.Item>)
         }
