@@ -23,7 +23,7 @@ export function form<T extends { new(...args: any[]): {} }>(target: T) {
     return wrapper
 }
 
-form.validate = (formObj: Record<string, any>, path?: string[]): void => {
+form.validate = (formObj: Record<string, any>, path?: string[]): [Record<string, any>, boolean] => {
     if (!path) {
         form.resetValidateStatus(formObj)
     }
@@ -31,15 +31,26 @@ form.validate = (formObj: Record<string, any>, path?: string[]): void => {
     if (!meta) {
         throw new Error('requires object marked with @form')
     }
+    let success = true
+    const data: Record<string, any> = {}
     for (let fieldName of meta.fields) {
         let meta = field.getMeta(formObj, fieldName)!
         const options = meta.options
-        field.validateField(formObj, fieldName, options)
+        if (!field.validateField(formObj, fieldName, options)) {
+            success = false
+        }
         const fieldValue = formObj[fieldName]
         if (getMetaFromObject(fieldValue)) {
-            form.validate(fieldValue, path ? path.concat([fieldName]) : [fieldName])
+            let [subData, subSucccess] = form.validate(fieldValue, path ? path.concat([fieldName]) : [fieldName])
+            if (!subSucccess) {
+                success = false
+            }
+            data[fieldName] = subData
+        } else {
+            data[fieldName] = fieldValue
         }
     }
+    return [data, success]
 }
 
 form.getLabel = <F extends Record<string, any>>(formObj: F, fieldName: keyof F): string => {

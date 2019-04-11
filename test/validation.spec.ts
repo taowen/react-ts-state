@@ -197,3 +197,24 @@ describe('validate field', () => {
         expect(form.getValidateStatus(formObj, 'myField1')).eq('warning')
     })
 })
+
+describe('validate form', () => {
+    it('should return validateStatus and data', () => {
+        @form
+        class MyForm {
+            @field
+            subForm = new SubForm()
+            @field({ required: true })
+            myField2: string
+        }
+        class SubForm {
+            @field({ required: true })
+            myField1: string
+        }
+        let formObj = new MyForm()
+        formObj.subForm.myField1 = 'hello'
+        let [data, success] = form.validate(formObj)
+        expect(success).false
+        expect(data).deep.eq({subForm: {myField1: 'hello'}, myField2: undefined})
+    })
+})
