@@ -1,9 +1,8 @@
+import { Moment } from "moment";
 import * as ValidatorPage from "../components/pages/ValidatorPage";
-import { field, FieldValidator, ValidateStatus } from "../concept/validation/field";
+import { field } from "../concept/validation/field";
 import { form } from "../concept/validation/form";
 import { byRegex } from "../concept/validation/validator";
-import { Moment } from "moment";
-import * as mobx from "mobx"
 
 @form
 export class DemoForm implements ValidatorPage.State {

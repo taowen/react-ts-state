@@ -217,4 +217,24 @@ describe('validate form', () => {
         expect(success).false
         expect(data).deep.eq({subForm: {myField1: 'hello'}, myField2: undefined})
     })
+    it('support multi field validate', () => {
+        @form({validate: (formObj: MyForm) => {
+            if (formObj.myField1 + formObj.myField2 > 5) {
+                form.setValidateStatus(formObj, 'myField1', 'error')
+            }
+            return false
+        }})
+        class MyForm {
+            @field
+            myField1: number
+            @field
+            myField2: number
+        }
+        let formObj = new MyForm()
+        formObj.myField1 = 3
+        formObj.myField2 = 4
+        let [data, success] = form.validate(formObj)
+        expect(success).false
+        expect(form.getValidateStatus(formObj, 'myField1')).eq('error')
+    })
 })

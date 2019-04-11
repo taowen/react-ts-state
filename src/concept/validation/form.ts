@@ -2,11 +2,27 @@ import * as field from "./field";
 
 const METADATA_KEY = 'validation:form'
 
-export function form<T extends { new(...args: any[]): {} }>(target: T) {
+interface FormOptions {
+    validate?: (formObj: any) => boolean|void
+}
+
+export function form(options: FormOptions): <T extends { new(...args: any[]): {} }>(target: T) => T;
+export function form<T extends { new(...args: any[]): {} }>(target: T, options?: FormOptions): T;
+export function form<T extends { new(...args: any[]): {} }>(target: T, options?: FormOptions) {
+    if (typeof target !== 'function') {
+        return (f: any) =>  {
+            form(f, target)
+        }
+    }
+    if (!options) {
+        options = {}
+    }
     let meta = getMeta(target)
     if (!meta) {
-        meta = { fields: [] }
+        meta = { fields: [], options: options }
         setMeta(target, meta)
+    } else {
+        meta.options = options
     }
     const wrapper = class extends target {
 
@@ -32,6 +48,11 @@ form.validate = (formObj: Record<string, any>, path?: string[]): [Record<string,
         throw new Error('requires object marked with @form')
     }
     let success = true
+    if (meta.options.validate) {
+        if (!meta.options.validate(formObj)) {
+            success = false
+        }
+    }
     const data: Record<string, any> = {}
     for (let fieldName of meta.fields) {
         let meta = field.getMeta(formObj, fieldName)!
@@ -57,12 +78,24 @@ form.getLabel = <F extends Record<string, any>>(formObj: F, fieldName: keyof F):
     return formObj[fieldName + '_label']
 }
 
+form.setLabel = <F extends Record<string, any>>(formObj: F, fieldName: keyof F, label: string): void => {
+    formObj[fieldName + '_label'] = label
+}
+
 form.getPlaceholder = <F extends Record<string, any>>(formObj: F, fieldName: keyof F): string => {
     return formObj[fieldName + '_placeholder']
 }
 
+form.setPlaceholder = <F extends Record<string, any>>(formObj: F, fieldName: keyof F, placeholder: string): void => {
+    formObj[fieldName + '_placeholder'] = placeholder
+}
+
 form.getHelp = <F extends Record<string, any>>(formObj: F, fieldName: keyof F): string => {
     return formObj[fieldName + '_help']
+}
+
+form.setHelp = <F extends Record<string, any>>(formObj: F, fieldName: keyof F, help: string): void => {
+    formObj[fieldName + '_help'] = help
 }
 
 form.isRequired = <F extends Record<string, any>>(formObj: F, fieldName: keyof F): boolean => {
@@ -79,6 +112,10 @@ form.setRequired = <F extends Record<string, any>>(formObj: F, fieldName: keyof 
 
 form.getValidateStatus = <F extends Record<string, any>>(formObj: F, fieldName: keyof F): field.ValidateStatus => {
     return formObj[fieldName + '_validateStatus']
+}
+
+form.setValidateStatus = <F extends Record<string, any>>(formObj: F, fieldName: keyof F, validateStatus: field.ValidateStatus): void => {
+    formObj[fieldName + '_validateStatus'] = validateStatus
 }
 
 form.resetValidateStatus = <F extends Record<string, any>>(formObj: F, propertyKey?: keyof F) => {
@@ -164,12 +201,13 @@ function assignFieldOptions(obj: Record<string, any>) {
 
 interface FormMeta {
     fields: string[]
+    options: FormOptions
 }
 
 export function registerField(target: Function, field: string) {
     let meta = getMeta(target)
     if (!meta) {
-        meta = { fields: [] }
+        meta = { fields: [], options: {} }
         setMeta(target, meta)
     }
     meta.fields.push(field)
