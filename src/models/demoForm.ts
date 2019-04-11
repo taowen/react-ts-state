@@ -34,7 +34,10 @@ export class DemoForm implements ValidatorPage.State {
     deliveryDate: Moment
 
     onSubmit() {
-        form.validate(this)
+        let [data, success] = form.validate(this)
+        if (success) {
+            alert(JSON.stringify(data))
+        }
     }
 }
 
