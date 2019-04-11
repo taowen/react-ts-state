@@ -10,6 +10,12 @@ export type FieldValidator = (val: any, fieldOptions: FieldOptions) => {
     validateStatus: ValidateStatus
     help?: string
 } | undefined
+export interface FieldValueChangedEvent {
+    form: Record<string, any>
+    field: string
+    value: any
+}
+export type FieldValueChangedEventHandler = (e: FieldValueChangedEvent, fieldOptions: FieldOptions) => void
 
 export interface FieldOptions {
     defaultValue?: any
@@ -20,7 +26,7 @@ export interface FieldOptions {
     validateOnChange?: boolean
     validateRequired?: FieldValidator
     validate?: FieldValidator
-    onChange?: (options: FieldOptions) => void
+    onChange?: FieldValueChangedEventHandler
 }
 
 export function field(options: FieldOptions): (target: Record<string, any>, propertyKey: string) => void
@@ -112,6 +118,10 @@ export function onChangeField(formObj: Record<string, any>, fieldName: string, o
         }
     }
     if (options.onChange) {
-        options.onChange(options)
+        options.onChange({
+            form: formObj,
+            field: fieldName,
+            value: formObj[fieldName]
+        }, options)
     }
 }

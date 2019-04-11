@@ -23,6 +23,11 @@ export class DemoForm implements ValidatorPage.State {
     })
     interests: string[];
 
+    @field({onChange: (e) => {
+        form.setRequired(e.form, 'deliveryDate', e.value)
+    }})
+    deliverToHome: boolean
+
     @field
     deliveryDate: Moment
 

@@ -58,6 +58,10 @@ form.isRequired = <F extends Record<string, any>>(formObj: F, fieldName: keyof F
     return formObj[fieldName + '_required']
 }
 
+form.setRequired = <F extends Record<string, any>>(formObj: F, fieldName: keyof F, required: boolean): void => {
+    formObj[fieldName + '_required'] = required
+}
+
 form.getValidateStatus = <F extends Record<string, any>>(formObj: F, fieldName: keyof F): field.ValidateStatus => {
     return formObj[fieldName + '_validateStatus']
 }
@@ -118,7 +122,8 @@ function assignFieldOptions(obj: Record<string, any>) {
     // @field might not be initialized with value, so we can not iterate props to find all fields
     for (let fieldName of meta.fields) { 
         let meta = field.getMeta(obj, fieldName)!
-        if (!meta.options.label) {
+        const fieldType = Reflect.getMetadata('design:type', obj, fieldName)
+        if (meta.options.label === undefined && fieldType != Boolean) {
             meta.options.label = fieldName
         }
         obj[fieldName + '_onChange'] = field.onChangeField.bind(null, obj, fieldName, meta.options)
@@ -126,6 +131,8 @@ function assignFieldOptions(obj: Record<string, any>) {
             // for example: password_label
             if (k === 'defaultValue') {
                 obj[fieldName] = v
+            } else if (k === 'onChange') {
+                // onChange is handled first by field.onChangeField
             } else {
                 obj[fieldName + '_' + k] = v
             }
