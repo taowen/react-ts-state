@@ -20,7 +20,7 @@ class ValidatorPage extends AutoComponent<Props, State> {
 
     public render() {
         return (
-            <Form style={{ margin: "16px 16px" }} layout="inline">
+            <Form style={{ margin: "16px 16px" }} layout="vertical">
                 <VInput field={fieldsOf(this).userName.firstName} />
                 <VInput field={fieldsOf(this).userName.lastName} />
                 <VInput field={fieldsOf(this).password} />

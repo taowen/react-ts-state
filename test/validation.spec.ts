@@ -19,6 +19,7 @@ describe('init options', () => {
     it('should set options even if inside nested object', () => {
         @form
         class MyForm {
+            @field
             subForm = new SubForm()
         }
 
@@ -63,6 +64,7 @@ describe('resetValidateStatus', () => {
     it('should reset nested form', () => {
         @form
         class MyForm {
+            @field
             subForm = new SubForm()
         }
         class SubForm {
@@ -109,6 +111,7 @@ describe('resetValue', () => {
     it('should reset nested form', () => {
         @form
         class MyForm {
+            @field
             subForm = new SubForm()
         }
         class SubForm {
@@ -140,6 +143,7 @@ describe('validate field', () => {
     it('should validate nested form', () => {
         @form
         class MyForm {
+            @field
             subForm = new SubForm()
         }
         class SubForm {

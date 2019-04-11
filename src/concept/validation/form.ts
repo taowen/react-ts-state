@@ -1,13 +1,11 @@
-import { FormItemProps } from "antd/lib/form/FormItem";
 import * as field from "./field";
 
-type ValidateStatus = FormItemProps['validateStatus']
 const METADATA_KEY = 'validation:form'
 
 export function form<T extends { new(...args: any[]): {} }>(target: T) {
     let meta = getMeta(target)
     if (!meta) {
-        meta = {fields: []}
+        meta = { fields: [] }
         setMeta(target, meta)
     }
     const wrapper = class extends target {
@@ -25,7 +23,10 @@ export function form<T extends { new(...args: any[]): {} }>(target: T) {
     return wrapper
 }
 
-form.validate = (formObj: Record<string, any>): void => {
+form.validate = (formObj: Record<string, any>, path?: string[]): void => {
+    if (!path) {
+        form.resetValidateStatus(formObj)
+    }
     const meta = getMetaFromObject(formObj)
     if (!meta) {
         throw new Error('requires object marked with @form')
@@ -34,10 +35,9 @@ form.validate = (formObj: Record<string, any>): void => {
         let meta = field.getMeta(formObj, fieldName)!
         const options = meta.options
         validateField(formObj, fieldName, options)
-    }
-    for (let fieldValue of Object.values(formObj)) {
+        const fieldValue = formObj[fieldName]
         if (getMetaFromObject(fieldValue)) {
-            form.validate(fieldValue)
+            form.validate(fieldValue, path ? path.concat([fieldName]) : [fieldName])
         }
     }
 }
@@ -49,7 +49,7 @@ function validateField(formObj: Record<string, any>, fieldName: string, options:
         }
     }
     if (options.validate) {
-        const result = options.validate(formObj[fieldName])
+        const result = options.validate(formObj[fieldName], options)
         if (isInvalid(result.validateStatus)) {
             formObj[fieldName + '_validateStatus'] = result.validateStatus
             if (result.help) {
@@ -68,7 +68,7 @@ function validateRequired(formObj: Record<string, any>, fieldName: string, optio
         }
         return true
     }
-    const result = options.validateRequired(formObj[fieldName])
+    const result = options.validateRequired(formObj[fieldName], options)
     if (isInvalid(result.validateStatus)) {
         formObj[fieldName + '_validateStatus'] = result.validateStatus
         if (result.help) {
@@ -79,11 +79,11 @@ function validateRequired(formObj: Record<string, any>, fieldName: string, optio
     return true
 }
 
-function isInvalid(validateStatus: ValidateStatus) {
+function isInvalid(validateStatus: field.ValidateStatus) {
     return validateStatus && validateStatus !== 'success'
 }
 
-form.getLabel = <F extends Record<string, any>>(formObj: F, fieldName: keyof F): string=> {
+form.getLabel = <F extends Record<string, any>>(formObj: F, fieldName: keyof F): string => {
     return formObj[fieldName + '_label']
 }
 
@@ -99,13 +99,15 @@ form.isRequired = <F extends Record<string, any>>(formObj: F, fieldName: keyof F
     return formObj[fieldName + '_required']
 }
 
-form.getValidateStatus = <F extends Record<string, any>>(formObj: F, fieldName: keyof F): ValidateStatus => {
+form.getValidateStatus = <F extends Record<string, any>>(formObj: F, fieldName: keyof F): field.ValidateStatus => {
     return formObj[fieldName + '_validateStatus']
 }
 
 form.resetValidateStatus = <F extends Record<string, any>>(formObj: F, propertyKey?: keyof F) => {
     if (propertyKey) {
+        let meta = field.getMeta(formObj, propertyKey as any)!
         formObj[propertyKey + '_validateStatus'] = undefined
+        formObj[propertyKey + '_help'] = meta.options.help
         const fieldValue = formObj[propertyKey]
         // is nested form?
         if (getMetaFromObject(fieldValue)) {
@@ -117,14 +119,8 @@ form.resetValidateStatus = <F extends Record<string, any>>(formObj: F, propertyK
     if (!meta) {
         throw new Error('requires object marked with @form')
     }
-    for (let field of meta.fields) {
-        form.resetValidateStatus(formObj, field)
-    }
-    for (let fieldValue of Object.values(formObj)) {
-        // is nested form?
-        if (getMetaFromObject(fieldValue)) {
-            form.resetValidateStatus(fieldValue)
-        }
+    for (let f of meta.fields) {
+        form.resetValidateStatus(formObj, f)
     }
 }
 
@@ -145,12 +141,6 @@ form.resetValue = <F extends Record<string, any>>(formObj: F, propertyKey?: keyo
     }
     for (let field of meta.fields) {
         form.resetValue(formObj, field)
-    }
-    for (let fieldValue of Object.values(formObj)) {
-        // is nested form?
-        if (getMetaFromObject(fieldValue)) {
-            form.resetValue(fieldValue)
-        }
     }
 }
 
@@ -197,13 +187,13 @@ interface FormMeta {
 export function registerField(target: Function, field: string) {
     let meta = getMeta(target)
     if (!meta) {
-        meta = {fields: []}
+        meta = { fields: [] }
         setMeta(target, meta)
     }
     meta.fields.push(field)
 }
 
-export function getMetaFromObject(target: Record<string, any>): FormMeta|undefined {
+export function getMetaFromObject(target: Record<string, any>): FormMeta | undefined {
     if (!target) {
         return undefined
     }
@@ -213,7 +203,7 @@ export function getMetaFromObject(target: Record<string, any>): FormMeta|undefin
     return getMeta(target.constructor)
 }
 
-export function getMeta(target: Function): FormMeta|undefined {
+export function getMeta(target: Function): FormMeta | undefined {
     return Reflect.getMetadata(METADATA_KEY, target) as FormMeta
 }
 

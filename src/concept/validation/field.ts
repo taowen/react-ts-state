@@ -5,8 +5,9 @@ import { FormItemProps } from "antd/lib/form";
 
 const METADATA_KEY = 'validation:field'
 
-type FieldValidator = (val: any) => {
-    validateStatus: FormItemProps['validateStatus']
+export type ValidateStatus = FormItemProps['validateStatus']
+export type FieldValidator = (val: any, fieldOptions: FieldOptions) => {
+    validateStatus: ValidateStatus
     help?: string
 }
 
