@@ -89,6 +89,32 @@ form.resetValidateStatus = <F extends Record<string, any>>(formObj: F, propertyK
     }
 }
 
+form.resetValue = <F extends Record<string, any>>(formObj: F, propertyKey?: keyof F) => {
+    if (propertyKey) {
+        const meta = field.getMeta(formObj, propertyKey as any)
+        formObj[propertyKey] = meta ? meta.options.defaultValue : undefined
+        const fieldValue = formObj[propertyKey]
+        // is nested form?
+        if (getMetaFromObject(fieldValue)) {
+            form.resetValue(fieldValue)
+        }
+        return
+    }
+    const meta = getMetaFromObject(formObj)
+    if (!meta) {
+        throw new Error('requires object marked with @form')
+    }
+    for (let field of meta.fields) {
+        form.resetValue(formObj, field)
+    }
+    for (let fieldValue of Object.values(formObj)) {
+        // is nested form?
+        if (getMetaFromObject(fieldValue)) {
+            form.resetValue(fieldValue)
+        }
+    }
+}
+
 
 function assignProtoMethods(obj: any) {
     const proto = Object.getPrototypeOf(Object.getPrototypeOf(obj))

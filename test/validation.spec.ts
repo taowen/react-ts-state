@@ -79,6 +79,53 @@ describe('resetValidateStatus', () => {
     })
 })
 
+describe('resetValue', () => {
+    it('should reset back to default value', () => {
+        @form
+        class MyForm {
+            @field({ defaultValue: 'abc' })
+            myField: string
+        }
+        let formObj = new MyForm()
+        formObj.myField = 'def'
+        form.resetValue(formObj, 'myField')
+        expect(formObj.myField).eq('abc')
+    })
+    it('should reset all back to default valu if no propertyKey specified', () => {
+        @form
+        class MyForm {
+            @field({ defaultValue: 'abc' })
+            myField1: string
+            @field({ defaultValue: 'abc' })
+            myField2: string
+        }
+        let formObj = new MyForm()
+        formObj.myField1 = 'def'
+        formObj.myField2 = 'def'
+        form.resetValue(formObj)
+        expect(formObj.myField1).eq('abc')
+        expect(formObj.myField2).eq('abc')
+    })
+    it('should reset nested form', () => {
+        @form
+        class MyForm {
+            subForm = new SubForm()
+        }
+        class SubForm {
+            @field({ defaultValue: 'abc' })
+            myField1: string
+            @field({ defaultValue: 'abc' })
+            myField2: string
+        }
+        let formObj = new MyForm()
+        formObj.subForm.myField1 = 'def'
+        formObj.subForm.myField2 = 'def'
+        form.resetValue(formObj)
+        expect(formObj.subForm.myField1).eq('abc')
+        expect(formObj.subForm.myField2).eq('abc')
+    })
+})
+
 describe('validate', () => {
     it('should validate required field', () => {
         @form
