@@ -26,11 +26,28 @@ export function form<T extends { new(...args: any[]): {} }>(target: T) {
     }
 }
 
-form.validate = (obj: Record<string, any>): void => {
-    if (obj.validate) {
-        obj.validate()
+form.validate = (formObj: Record<string, any>): void => {
+    if (formObj.validate) {
+        formObj.validate()
     }
 }
+
+form.getLabel = <F extends Record<string, any>>(formObj: F, fieldName: keyof F) => {
+    return formObj[fieldName + '_label']
+}
+
+form.getPlaceholder = <F extends Record<string, any>>(formObj: F, fieldName: keyof F) => {
+    return formObj[fieldName + '_placeholder']
+}
+
+form.getHelp = <F extends Record<string, any>>(formObj: F, fieldName: keyof F) => {
+    return formObj[fieldName + '_help']
+}
+
+form.isRequired = <F extends Record<string, any>>(formObj: F, fieldName: keyof F): boolean => {
+    return formObj[fieldName + '_required']
+}
+
 
 function assignProtoMethods(obj: any) {
     const proto = Object.getPrototypeOf(Object.getPrototypeOf(obj))
@@ -42,6 +59,7 @@ function assignProtoMethods(obj: any) {
 }
 
 function assignFieldOptions(target: Function, obj: any) {
+    // @field might not be initialized with value, so we can not iterate props to find all fields
     for (let fieldName of getMeta(target).fields) {
         let meta = field.getMeta(obj, fieldName)
         if (!meta.options.label) {
@@ -51,7 +69,10 @@ function assignFieldOptions(target: Function, obj: any) {
             // for example: password_label
             (obj as any)[fieldName + '_' + k] = v
         }
-        let fieldValue = obj[fieldName]
+    }
+    // nested form might not be marked as @field, we iterate all props instead
+    // nested form must be initialized
+    for (let fieldValue of Object.values(obj)) {
         if (fieldValue && getMeta(fieldValue.constructor).fields.length > 0) {
             assignFieldOptions(fieldValue.constructor, fieldValue)
         }
